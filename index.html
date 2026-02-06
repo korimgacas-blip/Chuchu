@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chuchu Pro 3.0 (Enhanced)</title>
+    <title>Chuchuzeiro</title>
     
-    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1b5e20">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,6 +23,7 @@
             --card-bg: #ffffff;
             --radius: 16px;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --mp-blue: #009EE3;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; outline: none; }
         body { background: var(--bg); margin: 0; padding-bottom: 100px; color: var(--text); user-select: none; }
@@ -81,6 +79,16 @@
         .btn-update { background: #f59e0b; color: white; }
         .btn-sec { background: #e5e7eb; color: #374151; margin-top: 10px; }
         .btn-pdf { background: #374151; color: white; margin: 0; }
+        .btn-wpp { background: #25D366; color: white; margin: 0; } 
+        .btn-support { background: #128C7E; color: white; margin-top: 20px; border: 1px dashed rgba(255,255,255,0.4); }
+        
+        /* Botões Doação e Info */
+        .btn-copy { background: #e5e7eb; color: #374151; margin-bottom: 10px; }
+        .btn-mp { background: var(--mp-blue); color: white; margin-top: 10px; }
+        .btn-dev { background: #1f2937; color: white; margin-top: 10px; }
+
+        .info-list { padding-left: 15px; margin: 0; font-size: 0.9rem; color: #555; text-align: left; }
+        .info-list li { margin-bottom: 8px; }
 
         /* List Items */
         .list-container { max-height: 400px; overflow-y: auto; padding-right: 4px; }
@@ -156,7 +164,7 @@
 <body>
 
 <header>
-    <div class="app-title">CHUCHU PRO <span style="font-weight:300; opacity:0.8; font-size: 0.8em">3.0</span></div>
+    <div class="app-title">CHUCHUZEIRO</div>
     <div class="db-status">● ONLINE</div>
 </header>
 
@@ -255,18 +263,69 @@
                     Backup offline: <span id="lbl-last-backup" style="font-weight:bold">Nunca</span>
                 </p>
                 
-                <button class="btn-pdf" onclick="gerarRelatorioPDF()" style="margin-bottom: 10px;">📄 Relatório PDF (Mês)</button>
+                <button class="btn-pdf" onclick="gerarRelatorioPDF()" style="margin-bottom: 10px;">📄 Baixar PDF</button>
+                <button class="btn-wpp" onclick="compartilharWhatsapp()" style="margin-bottom: 10px;">📱 Enviar no WhatsApp</button>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <button class="btn-sec" onclick="exportarManual()" style="margin:0">📤 Backup JSON</button>
                     <button class="btn-sec" onclick="document.getElementById('fileInput').click()" style="margin:0">📥 Importar JSON</button>
                 </div>
 
+                <button class="btn-support" onclick="abrirSuporte()">🎧 Suporte Técnico</button>
+
                 <button class="btn-d" style="margin-top:15px; background:#fee2e2; color:#b91c1c" onclick="confirmAction('Apagar Tudo', 'Tem certeza? Todos os dados serão perdidos.', limparBancoDados)">⚠️ Resetar App</button>
                 <input type="file" id="fileInput" style="display:none" accept=".json" onchange="iniciarImportacao(event)">
             </div>
         </div>
     </div>
+    
+    <div id="v-doacao" class="view">
+        <div class="card" style="text-align: center;">
+            <h3><i>💜</i> Apoie o Projeto</h3>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">
+                Se este aplicativo ajuda no seu dia a dia, considere fazer uma doação para manter o desenvolvimento ativo.
+            </p>
+            
+            <label style="text-align: left;">Chave PIX (E-mail)</label>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="pix-key" value="Aquinogabriel@outlook.com" readonly style="margin: 0; background: #f3f4f6; color: #555;">
+            </div>
+            <button class="btn-copy" onclick="copiarPix()">📋 Copiar Chave PIX</button>
+            
+            <div style="margin: 20px 0; border-top: 1px solid #eee; position: relative;">
+                <span style="background: white; padding: 0 10px; color: #999; font-size: 0.8rem; position: relative; top: -10px;">OU</span>
+            </div>
+
+            <button class="btn-mp" onclick="abrirMercadoPago()">🤝 Apoiar com Mercado Pago</button>
+        </div>
+
+        <div class="card">
+            <h3><i>💡</i> Dicas de Uso</h3>
+            <ul class="info-list">
+                <li><b>Funciona Offline:</b> Você pode registrar colheitas e gastos sem internet. Os dados ficam salvos no seu aparelho.</li>
+                <li><b>Relatórios PDF:</b> Na aba Relatórios (ícone de engrenagem), você pode baixar um PDF completo do mês para enviar ao contador ou arquivar.</li>
+                <li><b>Segurança:</b> Faça "Backup JSON" semanalmente e salve no seu e-mail ou Google Drive para garantir que nunca perderá seus dados caso troque de celular.</li>
+                <li><b>Controle:</b> Use a aba de relatórios para ver se sua margem de lucro está positiva ou negativa no mês atual.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3><i>🔒</i> Privacidade</h3>
+            <p style="font-size: 0.9rem; color: #555; line-height: 1.5;">
+                O Chuchuzeiro é um aplicativo seguro e privado. <b>Todos os seus dados (valores, datas, anotações) ficam gravados apenas na memória do seu navegador/celular.</b>
+                Nós não temos servidores e não coletamos nenhuma informação sua. Se você limpar os dados do navegador sem fazer backup, suas informações serão apagadas.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3><i>🚀</i> Personalizações</h3>
+            <p style="font-size: 0.9rem; color: #555; margin-bottom: 15px;">
+                Precisa de um recurso novo, logotipo da sua fazenda ou uma versão customizada? Entre em contato para atualizações.
+            </p>
+            <button class="btn-wpp" onclick="pedirAtualizacao()">💬 Quero atualizações</button>
+        </div>
+    </div>
+
 </div>
 
 <nav>
@@ -274,6 +333,7 @@
         <div class="tab active" onclick="navTo('v-venda',this)"><i>📦</i><span>Colheita</span></div>
         <div class="tab" onclick="navTo('v-gasto',this)"><i>💸</i><span>Despesas</span></div>
         <div class="tab" onclick="navTo('v-consulta',this)"><i>📈</i><span>RELATÓRIOS</span></div>
+        <div class="tab" onclick="navTo('v-doacao',this)"><i>💜</i><span>Sobre</span></div>
     </div>
 </nav>
 
@@ -292,7 +352,6 @@
 <div id="toast">Notificação</div>
 
 <script>
-    /* LÓGICA PRINCIPAL (INDEXEDDB, RENDERING, ETC) MANTIDA */
     let db;
     let chartInstance;
     const DB_NAME = "ChuchuProDB_v2";
@@ -307,6 +366,14 @@
         setTodayDate();
         verificarBackupSemanal();
         
+        // PWA: Registro do Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker registrado:', reg.scope))
+                .catch(err => console.error('Erro ao registrar Service Worker:', err));
+        }
+
+        // Setup Modal Listeners
         document.getElementById('modal-btn-cancel').onclick = closeModal;
         document.getElementById('modal-btn-confirm').onclick = () => {
             if(pendingAction) pendingAction();
@@ -320,6 +387,7 @@
         document.getElementById('dg').value = today;
     }
 
+    // --- INDEXEDDB ---
     function initDB() {
         const request = indexedDB.open(DB_NAME, DB_VERSION);
         request.onupgradeneeded = e => {
@@ -339,6 +407,7 @@
         });
     }
 
+    // --- UI HELPERS ---
     function showToast(msg, type) {
         const t = document.getElementById("toast");
         t.innerHTML = type === 'success' ? '✅ ' + msg : '⚠️ ' + msg;
@@ -352,6 +421,7 @@
         document.getElementById('modal-icon').innerText = icon;
         const btn = document.getElementById('modal-btn-confirm');
         btn.style.background = confirmColor || 'var(--p)';
+        
         pendingAction = action;
         document.getElementById('custom-modal').classList.add('open');
     }
@@ -365,7 +435,9 @@
         document.querySelectorAll('.view, .tab').forEach(el => el.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
         tabEl.classList.add('active');
-        if(viewId === 'v-consulta') { popularFiltroMeses().then(render); }
+        if(viewId === 'v-consulta') {
+             popularFiltroMeses().then(render);
+        }
     }
 
     function toggleConfig() { 
@@ -373,6 +445,7 @@
         el.style.display = el.style.display === 'none' ? 'block' : 'none';
     }
 
+    // --- DATA LOGIC ---
     function isDataFutura(dateString) {
         const inputDate = new Date(dateString + 'T00:00:00');
         const today = new Date();
@@ -385,10 +458,13 @@
         const q = parseFloat(document.getElementById('q').value);
         const p = parseFloat(document.getElementById('p').value);
         const dt = document.getElementById('dv').value;
+
         if(!q || !p || !dt) return showToast("Preencha todos os campos", "error");
         if(isDataFutura(dt)) return showToast("Data futura não permitida", "error");
+
         const item = { q, p, dt, t: (q * p) };
         if(id) item.id = parseInt(id);
+
         transaction("vendas", "readwrite").put(item).onsuccess = () => {
             showToast(id ? "Venda atualizada" : "Venda registrada", "success");
             espelharDadosAutomatico();
@@ -402,10 +478,13 @@
         const d = document.getElementById('d').value;
         const v = parseFloat(document.getElementById('v').value);
         const dt = document.getElementById('dg').value;
+
         if(!d || !v || !dt) return showToast("Preencha todos os campos", "error");
         if(isDataFutura(dt)) return showToast("Data futura não permitida", "error");
+
         const item = { d, v, dt };
         if(id) item.id = parseInt(id);
+
         transaction("gastos", "readwrite").put(item).onsuccess = () => {
             showToast(id ? "Gasto atualizado" : "Gasto registrado", "success");
             espelharDadosAutomatico();
@@ -414,33 +493,54 @@
         };
     }
 
+    // --- LISTING & RENDERING (NOVO DOM SEGURO) ---
     async function render() {
         if(document.getElementById('filtroMes').options.length === 0) await popularFiltroMeses();
+        
         const filtro = document.getElementById('filtroMes').value;
         const allV = await getAll("vendas");
         const allG = await getAll("gastos");
         const v = allV.filter(i => i.dt.startsWith(filtro));
         const g = allG.filter(i => i.dt.startsWith(filtro));
+
+        // Totais
         const tCx = v.reduce((sum, i) => sum + i.q, 0);
         const tV = v.reduce((sum, i) => sum + i.t, 0);
         const tG = g.reduce((sum, i) => sum + i.v, 0);
         const saldo = tV - tG;
+        
+        // Margin Calculation
         const margin = tV > 0 ? ((saldo / tV) * 100).toFixed(0) : 0;
+        
+        // Update Dash
         animateValue("dash-cx", parseInt(document.getElementById('dash-cx').innerText), tCx, "");
         document.getElementById('dash-rs').innerText = FORMAT_BRL.format(saldo);
         document.getElementById('dash-rs').style.color = saldo >= 0 ? '#1b5e20' : '#c62828';
+        
         document.getElementById('dash-margin').innerText = margin + "%";
         document.getElementById('dash-margin').style.color = margin > 0 ? 'var(--p)' : (margin < 0 ? 'var(--s)' : '#666');
+        
         document.getElementById('dash-in').innerText = FORMAT_BRL.format(tV);
         document.getElementById('dash-out').innerText = FORMAT_BRL.format(tG);
+
+        // List
         const lista = document.getElementById('lista-detalhada');
         lista.innerHTML = '';
-        const combined = [...v.map(i => ({...i, type: 'vendas'})), ...g.map(i => ({...i, type: 'gastos'}))].sort((a,b) => new Date(b.dt) - new Date(a.dt) || b.id - a.id);
+        
+        const combined = [
+            ...v.map(i => ({...i, type: 'vendas'})),
+            ...g.map(i => ({...i, type: 'gastos'}))
+        ].sort((a,b) => new Date(b.dt) - new Date(a.dt) || b.id - a.id);
+
         if (combined.length === 0) {
             lista.innerHTML = '<div class="empty-state">📭 Nenhum registro neste mês.</div>';
         } else {
-            combined.forEach(item => { const el = criarElementoLista(item); lista.appendChild(el); });
+            combined.forEach(item => {
+                const el = criarElementoLista(item);
+                lista.appendChild(el);
+            });
         }
+        
         atualizarGrafico(v, g);
     }
 
@@ -449,11 +549,30 @@
         const val = isV ? item.t : item.v;
         const dia = item.dt.split('-')[2];
         const mesAbrev = new Date(item.dt).toLocaleString('pt-BR', {month:'short'}).replace('.','');
+        
         const div = document.createElement('div');
         div.className = 'item';
-        div.innerHTML = `<div class="item-date-box"><span>${mesAbrev}</span><strong>${dia}</strong></div><div class="item-desc"><b>${isV ? item.q + ' Caixas' : item.d}</b><small>${isV ? FORMAT_BRL.format(item.p) + '/un' : 'Despesa'}</small></div><div class="item-value"><b style="color:${isV?'var(--p)':'var(--s)'}">${isV?'+':'-'} ${FORMAT_BRL.format(val)}</b><div class="actions"><span class="btn-mini edit">Editar</span><span class="btn-mini del">✕</span></div></div>`;
+        div.innerHTML = `
+            <div class="item-date-box">
+                <span>${mesAbrev}</span>
+                <strong>${dia}</strong>
+            </div>
+            <div class="item-desc">
+                <b>${isV ? item.q + ' Caixas' : item.d}</b>
+                <small>${isV ? FORMAT_BRL.format(item.p) + '/un' : 'Despesa'}</small>
+            </div>
+            <div class="item-value">
+                <b style="color:${isV?'var(--p)':'var(--s)'}">${isV?'+':'-'} ${FORMAT_BRL.format(val)}</b>
+                <div class="actions">
+                    <span class="btn-mini edit">Editar</span>
+                    <span class="btn-mini del">✕</span>
+                </div>
+            </div>
+        `;
+
         div.querySelector('.edit').onclick = () => editarItem(item.type, item.id);
         div.querySelector('.del').onclick = () => confirmAction("Apagar Item", "Deseja remover este registro?", () => apagarItem(item.type, item.id), '🗑️', '#ef4444');
+        
         return div;
     }
 
@@ -464,26 +583,63 @@
         const increment = end > start ? 1 : -1;
         const stepTime = Math.abs(Math.floor(1000 / range));
         const obj = document.getElementById(id);
-        const timer = setInterval(function() { current += increment; obj.innerHTML = current + suffix; if (current == end) clearInterval(timer); }, Math.max(stepTime, 20));
+        const timer = setInterval(function() {
+            current += increment;
+            obj.innerHTML = current + suffix;
+            if (current == end) clearInterval(timer);
+        }, Math.max(stepTime, 20));
         setTimeout(() => { clearInterval(timer); obj.innerHTML = end + suffix; }, 1000);
     }
 
+    // --- CHART ---
     function atualizarGrafico(vendas, gastos) {
         const ctx = document.getElementById('graficoLinha').getContext('2d');
         if(chartInstance) chartInstance.destroy();
+        
         const map = {};
-        vendas.forEach(i => { const d = parseInt(i.dt.split('-')[2]); if(!map[d]) map[d] = 0; map[d] += i.q; });
+        vendas.forEach(i => { 
+            const d = parseInt(i.dt.split('-')[2]); 
+            if(!map[d]) map[d] = 0;
+            map[d] += i.q; 
+        });
+        
         const labels = Object.keys(map).map(Number).sort((a,b)=>a-b);
+        
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(0, 'rgba(27, 94, 32, 0.2)');
         gradient.addColorStop(1, 'rgba(27, 94, 32, 0.0)');
+
         chartInstance = new Chart(ctx, {
             type: 'line',
-            data: { labels: labels, datasets: [{ label: 'Caixas', data: labels.map(d=>map[d]), borderColor: '#1b5e20', backgroundColor: gradient, borderWidth: 2, pointBackgroundColor: '#fff', pointBorderColor: '#1b5e20', pointRadius: 4, fill: true, tension: 0.3 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { font: {size: 10} } }, x: { grid: { display: false }, ticks: { font: {size: 10} } } }, interaction: { mode: 'nearest', axis: 'x', intersect: false } }
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Caixas',
+                    data: labels.map(d=>map[d]),
+                    borderColor: '#1b5e20',
+                    backgroundColor: gradient,
+                    borderWidth: 2,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#1b5e20',
+                    pointRadius: 4,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                scales: { 
+                    y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { font: {size: 10} } }, 
+                    x: { grid: { display: false }, ticks: { font: {size: 10} } } 
+                },
+                interaction: { mode: 'nearest', axis: 'x', intersect: false }
+            }
         });
     }
 
+    // --- EDIT & DELETE ---
     function editarItem(type, id) {
         transaction(type, "readonly").get(id).onsuccess = (e) => {
             const data = e.target.result;
@@ -492,8 +648,11 @@
                 document.getElementById('q').value = data.q;
                 document.getElementById('p').value = data.p;
                 document.getElementById('dv').value = data.dt;
+                
                 document.getElementById('titulo-venda').innerHTML = "<i>✏️</i> Editando Venda";
-                const btn = document.getElementById('btn-acao-venda'); btn.innerText = "Salvar Alterações"; btn.className = "btn-update";
+                const btn = document.getElementById('btn-acao-venda');
+                btn.innerText = "Salvar Alterações";
+                btn.className = "btn-update";
                 document.getElementById('btn-cancel-venda').style.display = 'block';
                 navTo('v-venda', document.querySelectorAll('.tab')[0]);
             } else {
@@ -501,8 +660,11 @@
                 document.getElementById('d').value = data.d;
                 document.getElementById('v').value = data.v;
                 document.getElementById('dg').value = data.dt;
+                
                 document.getElementById('titulo-gasto').innerHTML = "<i>✏️</i> Editando Gasto";
-                const btn = document.getElementById('btn-acao-gasto'); btn.innerText = "Salvar Alterações"; btn.className = "btn-update";
+                const btn = document.getElementById('btn-acao-gasto');
+                btn.innerText = "Salvar Alterações";
+                btn.className = "btn-update";
                 document.getElementById('btn-cancel-gasto').style.display = 'block';
                 navTo('v-gasto', document.querySelectorAll('.tab')[1]);
             }
@@ -510,77 +672,309 @@
     }
 
     function cancelarEdicao(type) { resetForm(type); }
+
     function resetForm(type) {
         setTodayDate();
         if(type === 'vendas') {
-            document.getElementById('venda-id').value = ""; document.getElementById('q').value = ""; document.getElementById('p').value = "";
+            document.getElementById('venda-id').value = "";
+            document.getElementById('q').value = "";
+            document.getElementById('p').value = "";
             document.getElementById('titulo-venda').innerHTML = "<i>📦</i> Registrar Colheita";
-            const btn = document.getElementById('btn-acao-venda'); btn.innerText = "Confirmar Venda"; btn.className = "btn-v";
+            const btn = document.getElementById('btn-acao-venda');
+            btn.innerText = "Confirmar Venda";
+            btn.className = "btn-v";
             document.getElementById('btn-cancel-venda').style.display = 'none';
         } else {
-            document.getElementById('gasto-id').value = ""; document.getElementById('d').value = ""; document.getElementById('v').value = "";
+            document.getElementById('gasto-id').value = "";
+            document.getElementById('d').value = "";
+            document.getElementById('v').value = "";
             document.getElementById('titulo-gasto').innerHTML = "<i>💸</i> Registrar Despesa";
-            const btn = document.getElementById('btn-acao-gasto'); btn.innerText = "Registrar Gasto"; btn.className = "btn-d";
+            const btn = document.getElementById('btn-acao-gasto');
+            btn.innerText = "Registrar Gasto";
+            btn.className = "btn-d";
             document.getElementById('btn-cancel-gasto').style.display = 'none';
         }
     }
 
-    function apagarItem(type, id) { transaction(type, "readwrite").delete(id).onsuccess = () => { showToast("Item removido", "success"); espelharDadosAutomatico(); render(); }; }
+    function apagarItem(type, id) {
+        transaction(type, "readwrite").delete(id).onsuccess = () => {
+            showToast("Item removido", "success");
+            espelharDadosAutomatico();
+            render();
+        };
+    }
 
+    // --- FILTROS ---
     async function popularFiltroMeses() {
-        const vendas = await getAll("vendas"); const gastos = await getAll("gastos");
+        const vendas = await getAll("vendas");
+        const gastos = await getAll("gastos");
         const todos = [...vendas, ...gastos];
         const meses = [...new Set(todos.map(i => i.dt.slice(0, 7)))].sort().reverse();
-        const select = document.getElementById('filtroMes'); const valorAtual = select.value; select.innerHTML = "";
-        if(meses.length === 0) { const hoje = new Date().toISOString().slice(0,7); meses.push(hoje); }
-        meses.forEach(mes => { const [ano, m] = mes.split('-'); const nomeMes = new Date(ano, m - 1).toLocaleString('pt-BR', { month: 'long' }); const opt = document.createElement('option'); opt.value = mes; opt.text = `${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)} ${ano}`; select.appendChild(opt); });
+        
+        const select = document.getElementById('filtroMes');
+        const valorAtual = select.value;
+        select.innerHTML = "";
+
+        if(meses.length === 0) {
+            const hoje = new Date().toISOString().slice(0,7);
+            meses.push(hoje);
+        }
+
+        meses.forEach(mes => {
+            const [ano, m] = mes.split('-');
+            const nomeMes = new Date(ano, m - 1).toLocaleString('pt-BR', { month: 'long' });
+            const opt = document.createElement('option');
+            opt.value = mes;
+            opt.text = `${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)} ${ano}`;
+            select.appendChild(opt);
+        });
+
         if(meses.includes(valorAtual)) select.value = valorAtual;
     }
 
-    async function espelharDadosAutomatico() { try { const v = await getAll("vendas"); const g = await getAll("gastos"); localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify({vendas: v, gastos: g})); } catch (e) { console.error("Erro backup auto", e); } }
+    // --- BACKUP & PDF ---
+    async function espelharDadosAutomatico() {
+        try {
+            const v = await getAll("vendas");
+            const g = await getAll("gastos");
+            localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify({vendas: v, gastos: g}));
+        } catch (e) { console.error("Erro backup auto", e); }
+    }
 
     function verificarBackupSemanal() {
-        const lastBackup = localStorage.getItem(BACKUP_KEY); const elLabel = document.getElementById('lbl-last-backup');
-        if (lastBackup) { elLabel.innerText = new Date(lastBackup).toLocaleDateString('pt-BR'); const diffDays = Math.ceil(Math.abs(new Date() - new Date(lastBackup)) / (86400000)); if (diffDays >= 7) document.getElementById('backup-alert').style.display = 'flex'; }
-        else { getAll("vendas").then(v => { if (v.length > 0) document.getElementById('backup-alert').style.display = 'flex'; }); }
+        const lastBackup = localStorage.getItem(BACKUP_KEY);
+        const elLabel = document.getElementById('lbl-last-backup');
+        
+        if (lastBackup) {
+            elLabel.innerText = new Date(lastBackup).toLocaleDateString('pt-BR');
+            const diffDays = Math.ceil(Math.abs(new Date() - new Date(lastBackup)) / (86400000)); 
+            if (diffDays >= 7) document.getElementById('backup-alert').style.display = 'flex';
+        } else {
+            getAll("vendas").then(v => {
+                if (v.length > 0) document.getElementById('backup-alert').style.display = 'flex';
+            });
+        }
     }
 
     async function gerarRelatorioPDF() {
-        showToast("Gerando PDF...", "success"); const { jsPDF } = window.jspdf; const doc = new jsPDF();
-        const filtro = document.getElementById('filtroMes').value; const [ano, mes] = filtro.split('-'); const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' });
-        const allV = await getAll("vendas"); const allG = await getAll("gastos");
-        const v = allV.filter(i => i.dt.startsWith(filtro)); const g = allG.filter(i => i.dt.startsWith(filtro));
-        const totalV = v.reduce((s, i) => s + i.t, 0); const totalG = g.reduce((s, i) => s + i.v, 0); const saldo = totalV - totalG; const totalCx = v.reduce((s, i) => s + i.q, 0);
-        doc.setFillColor(27, 94, 32); doc.rect(0, 0, 210, 40, 'F'); doc.setFontSize(22); doc.setTextColor(255, 255, 255); doc.text("CHUCHU PRO", 14, 20); doc.setFontSize(12); doc.text("Relatório Mensal: " + nomeMes.toUpperCase() + " / " + ano, 14, 30);
+        showToast("Gerando PDF...", "success");
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        const filtro = document.getElementById('filtroMes').value;
+        const [ano, mes] = filtro.split('-');
+        const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' });
+        
+        // Dados
+        const allV = await getAll("vendas");
+        const allG = await getAll("gastos");
+        const v = allV.filter(i => i.dt.startsWith(filtro));
+        const g = allG.filter(i => i.dt.startsWith(filtro));
+        
+        const totalV = v.reduce((s, i) => s + i.t, 0);
+        const totalG = g.reduce((s, i) => s + i.v, 0);
+        const saldo = totalV - totalG;
+        const totalCx = v.reduce((s, i) => s + i.q, 0);
+
+        // --- DESIGN DO PDF ---
+        doc.setFillColor(27, 94, 32); 
+        doc.rect(0, 0, 210, 40, 'F');
+        doc.setFontSize(22); doc.setTextColor(255, 255, 255);
+        doc.text("CHUCHUZEIRO", 14, 20); 
+        doc.setFontSize(12);
+        doc.text("Relatório Mensal: " + nomeMes.toUpperCase() + " / " + ano, 14, 30);
+        
         let yPos = 55;
-        doc.setFillColor(232, 245, 233); doc.rect(14, yPos, 55, 25, 'F'); doc.setTextColor(27, 94, 32); doc.setFontSize(10); doc.text("ENTRADAS", 18, yPos + 8); doc.setFontSize(14); doc.text(FORMAT_BRL.format(totalV), 18, yPos + 18);
-        doc.setFillColor(255, 235, 238); doc.rect(77, yPos, 55, 25, 'F'); doc.setTextColor(198, 40, 40); doc.setFontSize(10); doc.text("SAÍDAS", 81, yPos + 8); doc.setFontSize(14); doc.text(FORMAT_BRL.format(totalG), 81, yPos + 18);
-        doc.setFillColor(243, 244, 246); doc.rect(140, yPos, 55, 25, 'F'); doc.setTextColor(31, 41, 55); doc.setFontSize(10); doc.text("SALDO FINAL", 144, yPos + 8); doc.setFontSize(14); doc.text(FORMAT_BRL.format(saldo), 144, yPos + 18);
-        doc.setTextColor(100); doc.setFontSize(9); doc.text(`Total de Caixas Colhidas: ${totalCx}`, 14, yPos + 35);
-        const tableBody = [...v.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), `${i.q} Caixas`, `R$ ${i.p.toFixed(2)}`, `+ ${FORMAT_BRL.format(i.t)}`]), ...g.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), i.d, '-', `- ${FORMAT_BRL.format(i.v)}`])]
-            .sort((a,b) => { const da = a[0].split('/').reverse().join('-'); const db = b[0].split('/').reverse().join('-'); return db.localeCompare(da); });
-        if(tableBody.length > 0) { doc.autoTable({ startY: yPos + 40, head: [['Data', 'Descrição', 'Unitário/Obs', 'Valor']], body: tableBody, theme: 'striped', headStyles: { fillColor: [27, 94, 32] }, alternateRowStyles: { fillColor: [240, 250, 240] }, columnStyles: { 0: { cellWidth: 30 }, 3: { halign: 'right', fontStyle: 'bold' } } }); }
-        else { doc.setTextColor(150); doc.text("Nenhum lançamento neste período.", 14, yPos + 50); }
-        const pageCount = doc.internal.getNumberOfPages(); for(let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFontSize(8); doc.setTextColor(150); doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')} - Página ${i}`, 14, 285); }
-        doc.save(`Relatorio_ChuchuPro_${filtro}.pdf`);
+        doc.setFillColor(232, 245, 233); doc.rect(14, yPos, 55, 25, 'F');
+        doc.setTextColor(27, 94, 32); doc.setFontSize(10); doc.text("ENTRADAS", 18, yPos + 8);
+        doc.setFontSize(14); doc.text(FORMAT_BRL.format(totalV), 18, yPos + 18);
+        
+        doc.setFillColor(255, 235, 238); doc.rect(77, yPos, 55, 25, 'F');
+        doc.setTextColor(198, 40, 40); doc.setFontSize(10); doc.text("SAÍDAS", 81, yPos + 8);
+        doc.setFontSize(14); doc.text(FORMAT_BRL.format(totalG), 81, yPos + 18);
+        
+        doc.setFillColor(243, 244, 246); doc.rect(140, yPos, 55, 25, 'F');
+        doc.setTextColor(31, 41, 55); doc.setFontSize(10); doc.text("SALDO FINAL", 144, yPos + 8);
+        doc.setFontSize(14); doc.text(FORMAT_BRL.format(saldo), 144, yPos + 18);
+
+        doc.setTextColor(100); doc.setFontSize(9);
+        doc.text(`Total de Caixas Colhidas: ${totalCx}`, 14, yPos + 35);
+
+        const tableBody = [
+            ...v.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), `${i.q} Caixas`, `R$ ${i.p.toFixed(2)}`, `+ ${FORMAT_BRL.format(i.t)}`]),
+            ...g.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), i.d, '-', `- ${FORMAT_BRL.format(i.v)}`])
+        ].sort((a,b) => b[0].split('/').reverse().join('-').localeCompare(a[0].split('/').reverse().join('-')));
+
+        if(tableBody.length > 0) {
+            doc.autoTable({
+                startY: yPos + 40,
+                head: [['Data', 'Descrição', 'Unitário/Obs', 'Valor']],
+                body: tableBody,
+                theme: 'striped',
+                headStyles: { fillColor: [27, 94, 32] },
+                alternateRowStyles: { fillColor: [240, 250, 240] },
+                columnStyles: { 0: { cellWidth: 30 }, 3: { halign: 'right', fontStyle: 'bold' } }
+            });
+        }
+        
+        doc.save(`Relatorio_Chuchuzeiro_${filtro}.pdf`);
     }
 
-    function exportarManual() { Promise.all([getAll("vendas"), getAll("gastos")]).then(([v, g]) => { const dataHoje = new Date().toISOString().split('T')[0]; const blob = new Blob([JSON.stringify({vendas: v, gastos: g})], {type: "application/json"}); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `ChuchuPro_Backup_${dataHoje}.json`; a.click(); localStorage.setItem(BACKUP_KEY, new Date().toISOString()); document.getElementById('backup-alert').style.display = 'none'; document.getElementById('lbl-last-backup').innerText = new Date().toLocaleDateString('pt-BR'); showToast("Backup salvo!", "success"); }); }
+    async function compartilharWhatsapp() {
+        showToast("Preparando relatório...", "success");
+        
+        const filtro = document.getElementById('filtroMes').value;
+        const [ano, mes] = filtro.split('-');
+        const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+        
+        const allV = await getAll("vendas");
+        const allG = await getAll("gastos");
+        const v = allV.filter(i => i.dt.startsWith(filtro));
+        const g = allG.filter(i => i.dt.startsWith(filtro));
+        
+        const totalV = v.reduce((s, i) => s + i.t, 0);
+        const totalG = g.reduce((s, i) => s + i.v, 0);
+        const saldo = totalV - totalG;
+        const totalCx = v.reduce((s, i) => s + i.q, 0);
 
-    function iniciarImportacao(e) { const file = e.target.files[0]; if(!file) return; confirmAction("Restaurar Dados", "Isso irá mesclar os dados do arquivo com os dados atuais.", () => { const reader = new FileReader(); reader.onload = f => { try { const data = JSON.parse(f.target.result); const txV = db.transaction("vendas", "readwrite"); data.vendas.forEach(i => { delete i.id; txV.objectStore("vendas").put(i); }); const txG = db.transaction("gastos", "readwrite"); data.gastos.forEach(i => { delete i.id; txG.objectStore("gastos").put(i); }); txG.oncomplete = () => { showToast("Dados restaurados!", "success"); espelharDadosAutomatico(); render(); }; } catch(err) { showToast("Arquivo inválido", "error"); } }; reader.readAsText(file); }, '📥'); }
+        let msg = `*RELATÓRIO CHUCHUZEIRO*\n`;
+        msg += `🗓 Período: ${nomeMes}/${ano}\n\n`;
+        msg += `✅ Entradas: ${FORMAT_BRL.format(totalV)}\n`;
+        msg += `🔻 Saídas: ${FORMAT_BRL.format(totalG)}\n`;
+        msg += `💰 *Saldo: ${FORMAT_BRL.format(saldo)}*\n`;
+        msg += `📦 Caixas Colhidas: ${totalCx}\n\n`;
+        msg += `_Gerado pelo App Chuchuzeiro_`;
 
-    function limparBancoDados() { const tx = db.transaction(["vendas", "gastos"], "readwrite"); tx.objectStore("vendas").clear(); tx.objectStore("gastos").clear(); tx.oncomplete = () => { localStorage.removeItem(AUTO_BACKUP_KEY); showToast("Tudo limpo!", "success"); render(); }; }
+        if (navigator.share && navigator.canShare) {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.setFillColor(27, 94, 32); doc.rect(0, 0, 210, 40, 'F');
+                doc.setFontSize(22); doc.setTextColor(255, 255, 255); doc.text("CHUCHUZEIRO", 14, 20);
+                doc.setFontSize(12); doc.text(`Relatório: ${nomeMes}/${ano}`, 14, 30);
+                
+                doc.setTextColor(0); doc.setFontSize(14);
+                doc.text(`Entradas: ${FORMAT_BRL.format(totalV)}`, 14, 60);
+                doc.text(`Saídas: ${FORMAT_BRL.format(totalG)}`, 14, 70);
+                doc.text(`Saldo: ${FORMAT_BRL.format(saldo)}`, 14, 80);
+                
+                 const tableBody = [
+                    ...v.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), `${i.q} Cxs`, `+ ${FORMAT_BRL.format(i.t)}`]),
+                    ...g.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), i.d, `- ${FORMAT_BRL.format(i.v)}`])
+                ].sort((a,b) => b[0].split('/').reverse().join('-').localeCompare(a[0].split('/').reverse().join('-')));
+                
+                if(tableBody.length > 0) {
+                     doc.autoTable({
+                        startY: 90,
+                        head: [['Data', 'Desc', 'Valor']],
+                        body: tableBody,
+                        theme: 'striped',
+                        headStyles: { fillColor: [27, 94, 32] }
+                    });
+                }
+
+                const pdfBlob = doc.output('blob');
+                const file = new File([pdfBlob], `Relatorio_${filtro}.pdf`, { type: "application/pdf" });
+
+                if (navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Relatório Mensal',
+                        text: msg
+                    });
+                    return; 
+                }
+            } catch (err) {
+                console.log("Erro no compartilhamento nativo, usando fallback de texto.", err);
+            }
+        }
+
+        const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        window.open(url, '_blank');
+    }
+
+    // --- FUNÇÃO SUPORTE TÉCNICO ---
+    function abrirSuporte() {
+        const numero = "5547996057007";
+        const mensagem = encodeURIComponent("Quero suporte do app chuchuzeiro");
+        const url = `https://wa.me/${numero}?text=${mensagem}`;
+        window.open(url, '_blank');
+    }
+
+    // --- FUNÇÕES DOAÇÃO & ATUALIZAÇÃO ---
+    function copiarPix() {
+        const pixKey = document.getElementById('pix-key');
+        pixKey.select();
+        pixKey.setSelectionRange(0, 99999); /* Para mobile */
+        navigator.clipboard.writeText(pixKey.value).then(() => {
+            showToast("Chave PIX copiada com sucesso!", "success");
+        });
+    }
+
+    function abrirMercadoPago() {
+        window.open('https://link.mercadopago.com.br/cuecasa', '_blank');
+    }
+
+    function pedirAtualizacao() {
+        const numero = "5547996057007";
+        const mensagem = encodeURIComponent("Quero atualizações do app chuchuzeiro");
+        const url = `https://wa.me/${numero}?text=${mensagem}`;
+        window.open(url, '_blank');
+    }
+
+    function exportarManual() {
+        Promise.all([getAll("vendas"), getAll("gastos")]).then(([v, g]) => {
+            const dataHoje = new Date().toISOString().split('T')[0];
+            const blob = new Blob([JSON.stringify({vendas: v, gastos: g})], {type: "application/json"});
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `Chuchuzeiro_Backup_${dataHoje}.json`;
+            a.click();
+            
+            localStorage.setItem(BACKUP_KEY, new Date().toISOString());
+            document.getElementById('backup-alert').style.display = 'none';
+            document.getElementById('lbl-last-backup').innerText = new Date().toLocaleDateString('pt-BR');
+            showToast("Backup salvo!", "success");
+        });
+    }
+
+    function iniciarImportacao(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        
+        confirmAction("Restaurar Dados", "Isso irá mesclar os dados do arquivo com os dados atuais.", () => {
+             const reader = new FileReader();
+             reader.onload = f => {
+                 try {
+                     const data = JSON.parse(f.target.result);
+                     const txV = db.transaction("vendas", "readwrite");
+                     data.vendas.forEach(i => { delete i.id; txV.objectStore("vendas").put(i); });
+                     
+                     const txG = db.transaction("gastos", "readwrite");
+                     data.gastos.forEach(i => { delete i.id; txG.objectStore("gastos").put(i); });
+                     
+                     txG.oncomplete = () => { 
+                         showToast("Dados restaurados!", "success"); 
+                         espelharDadosAutomatico();
+                         render(); 
+                     };
+                 } catch(err) { showToast("Arquivo inválido", "error"); }
+             };
+             reader.readAsText(file);
+        }, '📥');
+    }
+
+    function limparBancoDados() {
+        const tx = db.transaction(["vendas", "gastos"], "readwrite");
+        tx.objectStore("vendas").clear();
+        tx.objectStore("gastos").clear();
+        tx.oncomplete = () => { 
+            localStorage.removeItem(AUTO_BACKUP_KEY); 
+            showToast("Tudo limpo!", "success"); 
+            render(); 
+        };
+    }
 </script>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then(reg => console.log('Chuchu Pro: Service Worker registrado!', reg.scope))
-        .catch(err => console.log('Erro ao registrar Service Worker:', err));
-    });
-  }
-</script>
-
 </body>
 </html>
