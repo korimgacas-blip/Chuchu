@@ -1,0 +1,21 @@
+{
+  "name": "Chuchu Pro 3.0",
+  "short_name": "ChuchuPro",
+  "description": "Sistema de Gestão de Colheita e Despesas - Ferreira",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#1b5e20",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
