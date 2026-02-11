@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -5,976 +6,1107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chuchuzeiro</title>
     
-    <meta name="theme-color" content="#1b5e20">
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1b5e20">
     <link rel="apple-touch-icon" href="icon-192.png">
-    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     
     <style>
-        :root { 
-            --p: #1b5e20; --p-light: #e8f5e9; --p-hover: #2e7d32;
-            --s: #c62828; --s-light: #ffebee;
-            --bg: #f3f4f6; --text: #1f2937; --text-light: #6b7280;
+        :root {
+            --p: #1b5e20;
+            --p-dark: #0e3d12;
+            --income: #1b5e20;
+            --expense: #c62828;
+            --bg: #f3f4f6;
             --card-bg: #ffffff;
-            --radius: 16px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --mp-blue: #009EE3;
+            --radius: 20px;
+            --chart-line: #1b5e20;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; outline: none; }
-        body { background: var(--bg); margin: 0; padding-bottom: 100px; color: var(--text); user-select: none; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* Header */
-        header { 
-            background: linear-gradient(145deg, #1b5e20 0%, #2e7d32 100%); 
-            color: white; padding: 20px 24px 60px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-radius: 0 0 32px 32px; box-shadow: 0 10px 25px -5px rgba(27,94,32,0.4);
+        body {
+            background: var(--bg);
+            margin: 0;
+            padding-bottom: 110px;
+            color: #111;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
-        .app-title { font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
-        .db-status { font-size: 0.7rem; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; backdrop-filter: blur(4px); font-weight: 600; border: 1px solid rgba(255,255,255,0.1); }
-        
-        /* Dashboard */
-        .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0 24px; margin-top: -40px; }
-        .dash-card { 
-            background: var(--card-bg); padding: 16px; border-radius: var(--radius); 
-            box-shadow: var(--shadow); text-align: center; 
-            position: relative; overflow: hidden;
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .dash-card::after { content:''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: var(--p); }
-        .dash-card small { color: var(--text-light); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; margin-bottom: 4px; }
-        .dash-card b { font-size: 1.35rem; color: #111; letter-spacing: -0.5px; }
-        .dash-card.full-width { grid-column: span 2; display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 12px 20px; }
-        .dash-card.full-width::after { display: none; }
-        
-        /* Layout */
-        .container { padding: 24px; max-width: 600px; margin: 0 auto; }
-        .view { display: none; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .view.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; }
-        
-        h3 { margin: 0 0 20px 0; color: #111; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        h3 i { color: var(--p); font-size: 1.2rem; }
-        
-        /* Form Elements */
-        label { display: block; font-size: 0.85rem; color: #4b5563; margin-bottom: 6px; font-weight: 500; }
+        .gpu-accelerated {
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        /* Header com gradiente verde */
+        header {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+            padding: 20px 24px 70px;
+            border-radius: 0 0 36px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+        .header-content { display: flex; flex-direction: column; justify-content: center; }
+        .app-title { font-weight: 800; font-size: 1.2rem; }
+        .user-greeting { font-size: 0.8rem; font-weight: 500; opacity: 0.9; margin-top: 4px; display: none; }
+
+        /* Dashboard 2+1 cards */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding: 0 24px;
+            margin-top: -50px;
+            position: relative;
+            z-index: 20;
+        }
+        .dash-card {
+            background: var(--card-bg);
+            padding: 20px 16px;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            text-align: center;
+            contain: content;
+            transform: translateZ(0);
+        }
+        .dash-card small { color: #6b7280; font-size: 0.7rem; text-transform: uppercase; font-weight: 700; }
+        .dash-card b { font-size: 1.2rem; display: block; margin-top: 5px; }
+        .dash-card.full-width { grid-column: span 2; display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 16px 24px; }
+
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+
+        .view { display: none; will-change: transform, opacity; }
+        .view.active { display: block; animation: fadeIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08);
+            transform: translateZ(0);
+            transition: transform 0.2s;
+        }
+        .card:active { transform: scale(0.99) translateZ(0); }
+
         input, select { 
-            width: 100%; padding: 14px 16px; border: 1px solid #e5e7eb; 
-            border-radius: 12px; margin-bottom: 16px; font-size: 1rem; 
-            background: #f9fafb; transition: all 0.2s; -webkit-appearance: none;
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 12px; 
+            border: 1px solid #e5e7eb; 
+            background: #f9fafb; 
+            margin-bottom: 15px; 
+            font-size: 16px; 
+            transition: all 0.2s;
         }
-        input:focus, select:focus { border-color: var(--p); background: #fff; box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1); }
-        
-        button { width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1rem; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        button:active { transform: scale(0.98); }
-        .btn-v { background: var(--p); color: white; }
-        .btn-d { background: var(--s); color: white; }
+        input:focus, select:focus { 
+            border-color: var(--p); 
+            box-shadow: 0 0 0 3px rgba(27,94,32,0.1); 
+            outline: none; 
+            background: white;
+        }
+
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            border-radius: 12px; 
+            border: none; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            transition: all 0.2s; 
+        }
+        button:active { transform: scale(0.98); opacity: 0.9; }
+
+        .btn-income { background: var(--income); color: white; }
+        .btn-expense { background: var(--expense); color: white; }
+        .btn-delete { background: #fff1f2; color: #e11d48; margin-top: 10px; border: 1px solid #fecaca; }
+        .btn-sec { background: #f3f4f6; color: #4b5563; }
+        .btn-primary { background: var(--p); color: white; }
+        .btn-pix { background: #32bcad; color: white; }
+        .btn-mp { background: #009ee3; color: white; }
+        .btn-wpp { background: #25d366; color: white; }
+        .btn-tutorial { background: #8b5cf6; color: white; }
+        .btn-pdf { background: #374151; color: white; }
         .btn-update { background: #f59e0b; color: white; }
-        .btn-sec { background: #e5e7eb; color: #374151; margin-top: 10px; }
-        .btn-pdf { background: #374151; color: white; margin: 0; }
-        .btn-wpp { background: #25D366; color: white; margin: 0; } 
-        .btn-support { background: #128C7E; color: white; margin-top: 20px; border: 1px dashed rgba(255,255,255,0.4); }
-        
-        /* Botões Doação e Info */
-        .btn-copy { background: #e5e7eb; color: #374151; margin-bottom: 10px; }
-        .btn-mp { background: var(--mp-blue); color: white; margin-top: 10px; }
-        .btn-dev { background: #1f2937; color: white; margin-top: 10px; }
 
-        .info-list { padding-left: 15px; margin: 0; font-size: 0.9rem; color: #555; text-align: left; }
-        .info-list li { margin-bottom: 8px; }
+        /* Navegação inferior flutuante */
+        nav {
+            position: fixed; bottom: 20px; left: 16px; right: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 100;
+            transform: translateZ(0);
+        }
+        .nav-buttons { display: flex; height: 70px; justify-content: space-around; align-items: center; }
+        .tab { color: #9ca3af; font-size: 0.65rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; transition: color 0.2s; }
+        .tab.active { color: var(--p); }
+        .tab i { font-size: 1.2rem; margin-bottom: 2px; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .tab.active i { transform: translateY(-3px); }
 
-        /* List Items */
-        .list-container { max-height: 400px; overflow-y: auto; padding-right: 4px; }
-        .item { display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #f3f4f6; align-items: center; }
-        .item:last-child { border-bottom: none; }
-        .item-date-box { background: #f3f4f6; padding: 6px 10px; border-radius: 8px; text-align: center; min-width: 50px; }
+        /* Lista de registros */
+        .item { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 15px 0; 
+            border-bottom: 1px solid #f3f4f6; 
+            cursor: pointer; 
+            transition: background 0.1s;
+            align-items: center;
+        }
+        .item:hover { background: #fafafa; }
+        .item-date-box {
+            background: #f3f4f6; padding: 6px 10px; border-radius: 8px; text-align: center; min-width: 50px;
+        }
         .item-date-box span { display: block; font-size: 0.7rem; color: #666; text-transform: uppercase; }
         .item-date-box strong { display: block; font-size: 1.1rem; color: #333; line-height: 1; margin-top: 2px; }
         .item-desc { margin-left: 12px; flex: 1; }
         .item-desc b { display: block; font-size: 0.95rem; color: #1f2937; margin-bottom: 2px; }
         .item-desc small { color: #6b7280; font-size: 0.8rem; }
-        .item-value { text-align: right; }
-        .actions { margin-top: 6px; display: flex; gap: 8px; justify-content: flex-end; opacity: 0.6; transition: opacity 0.2s; }
-        .item:hover .actions { opacity: 1; }
-        .btn-mini { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; cursor: pointer; }
-        .edit { background: #e0f2fe; color: #0284c7; }
-        .del { background: #fee2e2; color: #dc2626; }
-
-        /* Navigation */
-        nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(0,0,0,0.05); z-index: 100; 
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        .nav-buttons { display: flex; height: 65px; justify-content: space-around; }
-        .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; cursor: pointer; position: relative; }
-        .tab i { font-size: 1.4rem; margin-bottom: 4px; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .tab span { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; }
-        .tab.active { color: var(--p); }
-        .tab.active i { transform: translateY(-4px); }
-        .tab.active::after { content: ''; position: absolute; top: 0; width: 40px; height: 3px; background: var(--p); border-radius: 0 0 4px 4px; }
-
-        /* Custom Modal */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 1000;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(2px);
-        }
-        .modal-overlay.open { opacity: 1; visibility: visible; }
-        .modal-box {
-            background: white; width: 85%; max-width: 320px;
-            padding: 24px; border-radius: 20px; text-align: center;
-            transform: scale(0.9); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        .modal-overlay.open .modal-box { transform: scale(1); }
-        .modal-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
-        .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: #111; }
-        .modal-desc { font-size: 0.9rem; color: #666; margin-bottom: 20px; line-height: 1.4; }
-        .modal-actions { display: flex; gap: 10px; }
-        .modal-actions button { padding: 12px; font-size: 0.9rem; }
 
         /* Toast */
         #toast {
-            visibility: hidden; min-width: 280px; background-color: #1f2937; color: #fff; text-align: center;
-            border-radius: 12px; padding: 14px 20px; position: fixed; z-index: 2000; left: 50%; bottom: 90px;
-            transform: translate(-50%, 20px); font-size: 0.9rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            opacity: 0; transition: all 0.3s; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 10px;
+            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateZ(0);
+            background: #333; color: white; padding: 12px 24px; border-radius: 50px;
+            opacity: 0; transition: opacity 0.3s; z-index: 2000; pointer-events: none;
+            will-change: opacity; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        #toast.show { visibility: visible; opacity: 1; transform: translate(-50%, 0); }
-        #toast.success { background-color: var(--p); }
-        #toast.error { background-color: var(--s); }
 
-        .backup-alert { 
-            background: #eff6ff; border: 1px solid #dbeafe; padding: 12px 16px; border-radius: 12px; 
+        /* Gráfico */
+        canvas { 
+            transform: translateZ(0); 
+            max-height: 250px; 
+            width: 100% !important; 
+        }
+
+        /* MODAIS GLASS (tutorial, pix, boas vindas) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(6px);
+            z-index: 5000; display: none; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            padding: 30px 20px; border-radius: 30px;
+            text-align: center; width: 100%; max-width: 340px;
+            transform: translateZ(0);
+            animation: floatUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glass-input {
+            background: rgba(255,255,255,0.8);
+            border: 2px solid transparent;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .glass-input:focus { border-color: var(--p); background: white; }
+
+        @keyframes floatUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Tutorial */
+        .tutorial-list {
+            text-align: left;
+            padding-left: 0;
+            list-style: none;
+            margin: 10px 0;
+        }
+        .tutorial-list h4 {
+            margin: 20px 0 8px;
+            color: var(--p);
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+        .tutorial-list ul {
+            padding-left: 20px;
+            margin: 0 0 5px 0;
+            list-style: none;
+        }
+        .tutorial-list li {
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            color: #4b5563;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            line-height: 1.4;
+        }
+        .tutorial-list li i { color: var(--p); margin-top: 2px; min-width: 18px; text-align: center; }
+
+        /* Backup alert */
+        .backup-alert {
+            background: #eff6ff; border: 1px solid #dbeafe; padding: 12px 16px; border-radius: 12px;
             margin-bottom: 20px; display: none; align-items: center; justify-content: space-between;
         }
-        .empty-state { text-align: center; padding: 40px 20px; color: #9ca3af; }
+
+        /* Info e privacidade */
+        .info-section { font-size: 0.85rem; line-height: 1.5; color: #4b5563; }
+        .privacy-box { background: #f0fdf4; border: 1px solid #10b981; padding: 15px; border-radius: 15px; margin-top: 15px; color: #065f46; }
+
+        /* Modal de confirmação (herdado do Chuchuzeiro) */
+        #custom-modal .modal-box {
+            background: white; width: 85%; max-width: 320px; padding: 24px; border-radius: 20px; text-align: center;
+            transform: scale(0.9); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        #custom-modal.open { display: flex; }
+        .modal-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+        .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: #111; }
     </style>
 </head>
 <body>
-
-<header>
-    <div class="app-title">CHUCHUZEIRO</div>
-    <div class="db-status">● ONLINE</div>
-</header>
-
-<div class="dashboard">
-    <div class="dash-card">
-        <small>Volume Mês</small>
-        <b id="dash-cx">0</b>
-        <span style="font-size:0.75rem; color:#666">caixas</span>
-    </div>
-    <div class="dash-card">
-        <small>Saldo Líquido</small>
-        <b id="dash-rs">R$ 0,00</b>
-    </div>
-    <div class="dash-card full-width" style="margin-top: 0;">
-        <div>
-            <small style="margin-bottom:0">Margem de Lucro</small>
-            <b id="dash-margin" style="font-size: 1.1rem; color: #666;">0%</b>
+    <header class="gpu-accelerated">
+        <div class="header-content">
+            <div class="app-title"><i class="fas fa-leaf"></i> CHUCHUZEIRO</div>
+            <div id="user-greeting" class="user-greeting"></div>
         </div>
-        <div style="text-align: right;">
-            <div style="font-size:0.7rem; color:var(--p)">Entrada: <span id="dash-in">R$ 0</span></div>
-            <div style="font-size:0.7rem; color:var(--s)">Saída: <span id="dash-out">R$ 0</span></div>
-        </div>
-    </div>
-</div>
+        <div id="status-tag"><i class="fas fa-cloud-sun"></i> ONLINE</div>
+    </header>
 
-<div class="container">
-    
-    <div id="backup-alert" class="backup-alert">
-        <div>
-            <div style="font-weight:700; color:#1e40af; font-size:0.85rem">Backup Pendente</div>
-            <div style="font-size:0.75rem; color:#60a5fa">Recomendado fazer backup.</div>
+    <div class="dashboard">
+        <div class="dash-card">
+            <small><i class="fas fa-boxes"></i> Volume Mês</small>
+            <b id="dash-cx">0</b>
+            <span style="font-size:0.7rem; color:#666">caixas</span>
         </div>
-        <button style="width: auto; padding: 8px 16px; font-size: 0.75rem; background: #2563eb; color: white;" onclick="exportarManual()">BAIXAR</button>
-    </div>
-
-    <div id="v-venda" class="view active">
-        <div class="card">
-            <h3 id="titulo-venda"><i>📦</i> Registrar Colheita</h3>
-            <input type="hidden" id="venda-id">
-            
-            <label>Quantidade de Caixas</label>
-            <input type="number" id="q" placeholder="0" inputmode="numeric" pattern="[0-9]*" onfocus="this.select()">
-            
-            <label>Preço por Caixa (R$)</label>
-            <input type="number" id="p" placeholder="0,00" step="0.01" inputmode="decimal" onfocus="this.select()">
-            
-            <label>Data</label>
-            <input type="date" id="dv">
-            
-            <button id="btn-acao-venda" class="btn-v" onclick="salvarVenda()">Confirmar Venda</button>
-            <button id="btn-cancel-venda" class="btn-sec" style="display:none;" onclick="cancelarEdicao('vendas')">Cancelar</button>
+        <div class="dash-card">
+            <small><i class="fas fa-coins"></i> Saldo Líquido</small>
+            <b id="dash-rs">R$ 0,00</b>
+        </div>
+        <div class="dash-card full-width">
+            <div>
+                <small style="margin-bottom:0"><i class="fas fa-chart-line"></i> Margem de Lucro</small>
+                <b id="dash-margin" style="font-size:1.2rem;">0%</b>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size:0.75rem; color:var(--p)"><i class="fas fa-arrow-up"></i> Entrada: <span id="dash-in">R$ 0</span></div>
+                <div style="font-size:0.75rem; color:var(--expense)"><i class="fas fa-arrow-down"></i> Saída: <span id="dash-out">R$ 0</span></div>
+            </div>
         </div>
     </div>
 
-    <div id="v-gasto" class="view">
-        <div class="card">
-            <h3 id="titulo-gasto"><i>💸</i> Registrar Despesa</h3>
-            <input type="hidden" id="gasto-id">
-            
-            <label>Descrição</label>
-            <input type="text" id="d" placeholder="Ex: Adubo, Combustível..." autocomplete="off">
-            
-            <label>Valor (R$)</label>
-            <input type="number" id="v" placeholder="0,00" step="0.01" inputmode="decimal" onfocus="this.select()">
-            
-            <label>Data</label>
-            <input type="date" id="dg">
-            
-            <button id="btn-acao-gasto" class="btn-d" onclick="salvarGasto()">Registrar Gasto</button>
-            <button id="btn-cancel-gasto" class="btn-sec" style="display:none;" onclick="cancelarEdicao('gastos')">Cancelar</button>
+    <div id="welcome-modal" class="modal-overlay">
+        <div class="glass-card">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🌱</div>
+            <h2 style="color: var(--p); margin: 0 0 10px;">Bem-vindo(a)!</h2>
+            <p style="color: #4b5563; font-size: 0.9rem; margin-bottom: 20px;">
+                Como você quer ser chamado(a) nos relatórios?
+            </p>
+            <input type="text" id="user-name-input" class="glass-input" placeholder="Ex: Sítio Esperança, Sr. João...">
+            <button class="btn-primary" onclick="salvarUsuario()">Começar</button>
         </div>
     </div>
 
-    <div id="v-consulta" class="view">
-        <div class="card">
-            <h3><i>📊</i> Desempenho</h3>
-            <select id="filtroMes" onchange="render()"></select>
+    <div id="tutorial-modal" class="modal-overlay">
+        <div class="glass-card" style="max-height: 85vh; overflow-y: auto; padding: 25px 20px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="color: var(--p); margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-book-open"></i> Guia Completo
+                </h3>
+                <i class="fas fa-times" onclick="closeTutorialModal()" style="font-size: 1.5rem; color: #9ca3af; cursor: pointer;"></i>
+            </div>
             
-            <div style="height:200px; width:100%; margin-top:10px;">
-                <canvas id="graficoLinha"></canvas>
+            <div class="tutorial-list">
+                <h4><i class="fas fa-seedling"></i> Registrar Colheita (Venda)</h4>
+                <ul>
+                    <li><i class="fas fa-pencil-alt"></i> <div><b>Aba "Colheita":</b> informe a quantidade de caixas, preço por caixa e data.</div></li>
+                    <li><i class="fas fa-check-circle"></i> <div>Clique em <strong>"Confirmar Venda"</strong>. O valor total é calculado automaticamente.</div></li>
+                    <li><i class="fas fa-edit"></i> <div>Para editar, clique sobre o item na aba "Relatórios".</div></li>
+                </ul>
+
+                <h4><i class="fas fa-tools"></i> Registrar Despesas</h4>
+                <ul>
+                    <li><i class="fas fa-pencil-alt"></i> <div><b>Aba "Despesas":</b> descreva o gasto, valor e data.</div></li>
+                    <li><i class="fas fa-check-circle"></i> <div>Clique em <strong>"Registrar Gasto"</strong>.</div></li>
+                    <li><i class="fas fa-edit"></i> <div>Edição rápida: toque no extrato e altere os dados.</div></li>
+                </ul>
+
+                <h4><i class="fas fa-chart-pie"></i> Relatórios e Gráficos</h4>
+                <ul>
+                    <li><i class="fas fa-calendar-alt"></i> <div><b>Filtro por mês:</b> selecione o período no topo da aba "Relatórios".</div></li>
+                    <li><i class="fas fa-chart-line"></i> <div><b>Gráfico de linhas:</b> mostra a quantidade de caixas vendidas por dia no mês.</div></li>
+                    <li><i class="fas fa-tachometer-alt"></i> <div><b>Dashboard:</b> volume, saldo, margem de lucro e entradas/saídas.</div></li>
+                    <li><i class="fas fa-list-ul"></i> <div><b>Extrato completo:</b> todas as vendas e despesas do mês, com edição.</div></li>
+                </ul>
+
+                <h4><i class="fas fa-file-pdf"></i> Backup e Relatórios</h4>
+                <ul>
+                    <li><i class="fas fa-file-pdf"></i> <div><b>PDF profissional:</b> relatório mensal com tabelas, resumo e cabeçalho personalizado.</div></li>
+                    <li><i class="fab fa-whatsapp"></i> <div><b>Enviar no WhatsApp:</b> compartilhe o PDF ou um resumo com seu contador/sócio.</div></li>
+                    <li><i class="fas fa-database"></i> <div><b>Backup JSON:</b> exporte seus dados para guardar no e-mail, Drive ou PC.</div></li>
+                    <li><i class="fas fa-upload"></i> <div><b>Importar:</b> restaure um backup anterior a qualquer momento.</div></li>
+                    <li><i class="fas fa-bell"></i> <div><b>Alerta de backup:</b> se passarem 7 dias sem backup, o app lembra você.</div></li>
+                </ul>
+
+                <h4><i class="fas fa-microchip"></i> Recursos Avançados</h4>
+                <ul>
+                    <li><i class="fas fa-mobile-alt"></i> <div><b>Instale como App (PWA):</b> no Chrome, use "Adicionar à tela inicial".</div></li>
+                    <li><i class="fas fa-wifi-slash"></i> <div><b>Funciona offline:</b> use no campo, sem internet – os dados ficam no seu celular.</div></li>
+                    <li><i class="fas fa-user-secret"></i> <div><b>Privacidade radical:</b> NENHUM dado sai do seu dispositivo (IndexedDB).</div></li>
+                </ul>
+
+                <h4><i class="fas fa-heart"></i> Apoie o Projeto</h4>
+                <ul>
+                    <li><i class="fas fa-qrcode"></i> <div><b>PIX:</b> QR Code na aba "Apoie".</div></li>
+                    <li><i class="fas fa-credit-card"></i> <div><b>Mercado Pago:</b> doe com cartão ou boleto.</div></li>
+                    <li><i class="fab fa-whatsapp"></i> <div><b>Contato direto:</b> fale com o desenvolvedor.</div></li>
+                    <li><i class="fas fa-book-reader"></i> <div><b>Tutorial:</b> este guia está sempre disponível na aba Apoie.</div></li>
+                </ul>
+            </div>
+            
+            <button class="btn-primary" onclick="closeTutorialModal()" style="margin-top: 20px; width: 100%;">
+                <i class="fas fa-check"></i> Entendi, vamos lá!
+            </button>
+        </div>
+    </div>
+
+    <div id="pix-modal" class="modal-overlay">
+        <div class="glass-card">
+            <h3 style="color: var(--p); margin-top: 0;">Mantenha o projeto vivo ☕</h3>
+            <div style="background: white; padding: 15px; border-radius: 15px; display: inline-block; margin: 10px 0;">
+                <img src="qrcode.png" alt="QR Code PIX" style="width: 200px; height: 200px; object-fit: contain; display: block;" onerror="this.src='https://placehold.co/200x200?text=QR+Code+PIX'">
+            </div>
+            <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 20px; line-height: 1.5;">
+                Sua doação mantém o Chuchuzeiro gratuito e sem anúncios.<br>
+                <b>Escaneie e faça um PIX</b>
+            </p>
+            <button class="btn-primary" onclick="closePixModal()" style="background: #374151;">
+                <i class="fas fa-times"></i> Fechar
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div id="v-venda" class="view active">
+            <div class="card">
+                <h3 id="titulo-venda"><i class="fas fa-seedling" style="color: var(--p);"></i> Registrar Colheita</h3>
+                <input type="hidden" id="venda-id">
+                
+                <label>Quantidade de Caixas</label>
+                <input type="number" id="q" placeholder="Ex: 50" inputmode="numeric" onfocus="this.select()">
+                
+                <label>Preço por Caixa (R$)</label>
+                <input type="number" id="p" placeholder="0,00" step="0.01" inputmode="decimal" onfocus="this.select()">
+                
+                <label>Data</label>
+                <input type="date" id="dv">
+                
+                <button id="btn-acao-venda" class="btn-income" onclick="salvarVenda()"><i class="fas fa-check"></i> Confirmar Venda</button>
+                <button id="btn-cancel-venda" class="btn-sec" style="display:none;" onclick="cancelarEdicao('vendas')"><i class="fas fa-undo-alt"></i> Cancelar</button>
             </div>
         </div>
 
-        <div class="card">
-            <h3><i>📝</i> Histórico</h3>
-            <div id="lista-detalhada" class="list-container"></div>
+        <div id="v-gasto" class="view">
+            <div class="card">
+                <h3 id="titulo-gasto"><i class="fas fa-tools" style="color: var(--expense);"></i> Registrar Despesa</h3>
+                <input type="hidden" id="gasto-id">
+                
+                <label>Descrição</label>
+                <input type="text" id="d" placeholder="Ex: Adubo, Combustível..." autocomplete="off">
+                
+                <label>Valor (R$)</label>
+                <input type="number" id="v" placeholder="0,00" step="0.01" inputmode="decimal" onfocus="this.select()">
+                
+                <label>Data</label>
+                <input type="date" id="dg">
+                
+                <button id="btn-acao-gasto" class="btn-expense" onclick="salvarGasto()"><i class="fas fa-money-bill-wave"></i> Registrar Gasto</button>
+                <button id="btn-cancel-gasto" class="btn-sec" style="display:none;" onclick="cancelarEdicao('gastos')"><i class="fas fa-undo-alt"></i> Cancelar</button>
+            </div>
         </div>
 
-        <div class="card">
-            <h3 onclick="toggleConfig()" style="cursor:pointer; justify-content:space-between">
-                <span><i>⚙️</i> Dados & Backup</span>
-                <span style="font-size:0.8rem; color:#999">▼</span>
-            </h3>
-            <div id="config-area" style="display:none">
-                <p style="font-size:0.8rem; color:#666; text-align:center; margin-bottom:15px">
-                    Backup offline: <span id="lbl-last-backup" style="font-weight:bold">Nunca</span>
-                </p>
+        <div id="v-consulta" class="view">
+            <div class="card">
+                <h3><i class="fas fa-chart-line" style="color: var(--p);"></i> Desempenho</h3>
+                <select id="filtroMes" onchange="render()"></select>
                 
-                <button class="btn-pdf" onclick="gerarRelatorioPDF()" style="margin-bottom: 10px;">📄 Baixar PDF</button>
-                <button class="btn-wpp" onclick="compartilharWhatsapp()" style="margin-bottom: 10px;">📱 Enviar no WhatsApp</button>
+                <div style="height:200px; width:100%; margin-top:10px;">
+                    <canvas id="graficoLinha"></canvas>
+                </div>
+            </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <button class="btn-sec" onclick="exportarManual()" style="margin:0">📤 Backup JSON</button>
-                    <button class="btn-sec" onclick="document.getElementById('fileInput').click()" style="margin:0">📥 Importar JSON</button>
+            <div class="card">
+                <h3><i class="fas fa-history"></i> Histórico</h3>
+                <div id="lista-detalhada" class="list-container"></div>
+            </div>
+
+            <div class="card" style="display: flex; flex-direction: column; gap: 10px;">
+                <div id="backup-alert" class="backup-alert">
+                    <div>
+                        <div style="font-weight:700; color:#1e40af; font-size:0.85rem">Backup Pendente</div>
+                        <div style="font-size:0.75rem; color:#60a5fa">Recomendado fazer backup.</div>
+                    </div>
+                    <button style="width: auto; padding: 8px 16px; font-size: 0.75rem; background: #2563eb; color: white;" onclick="exportarManual()"><i class="fas fa-download"></i> BAIXAR</button>
                 </div>
 
-                <button class="btn-support" onclick="abrirSuporte()">🎧 Suporte Técnico</button>
+                <button class="btn-pdf" onclick="gerarRelatorioPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF Completo</button>
+                <button class="btn-wpp" onclick="compartilharWhatsapp()"><i class="fab fa-whatsapp"></i> Enviar no WhatsApp</button>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button class="btn-sec" onclick="exportarManual()"><i class="fas fa-download"></i> Backup JSON</button>
+                    <button class="btn-sec" onclick="document.getElementById('fileInput').click()"><i class="fas fa-upload"></i> Importar JSON</button>
+                    <input type="file" id="fileInput" style="display:none" accept=".json" onchange="iniciarImportacao(event)">
+                </div>
 
-                <button class="btn-d" style="margin-top:15px; background:#fee2e2; color:#b91c1c" onclick="confirmAction('Apagar Tudo', 'Tem certeza? Todos os dados serão perdidos.', limparBancoDados)">⚠️ Resetar App</button>
-                <input type="file" id="fileInput" style="display:none" accept=".json" onchange="iniciarImportacao(event)">
+                <button class="btn-delete" onclick="confirmAction('Apagar Tudo', 'Tem certeza? Todos os dados serão perdidos.', limparBancoDados, '⚠️', '#ef4444')">
+                    <i class="fas fa-trash-alt"></i> Resetar App
+                </button>
             </div>
         </div>
-    </div>
-    
-    <div id="v-doacao" class="view">
-        <div class="card" style="text-align: center;">
-            <h3><i>💜</i> Apoie o Projeto</h3>
-            <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">
-                Se este aplicativo ajuda no seu dia a dia, considere fazer uma doação para manter o desenvolvimento ativo.
-            </p>
-            
-            <label style="text-align: left;">Chave PIX (E-mail)</label>
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <input type="text" id="pix-key" value="Aquinogabriel@outlook.com" readonly style="margin: 0; background: #f3f4f6; color: #555;">
-            </div>
-            <button class="btn-copy" onclick="copiarPix()">📋 Copiar Chave PIX</button>
-            
-            <div style="margin: 20px 0; border-top: 1px solid #eee; position: relative;">
-                <span style="background: white; padding: 0 10px; color: #999; font-size: 0.8rem; position: relative; top: -10px;">OU</span>
-            </div>
 
-            <button class="btn-mp" onclick="abrirMercadoPago()">🤝 Apoiar com Mercado Pago</button>
-        </div>
+        <div id="v-apoie" class="view">
+            <div class="card">
+                <h3><i class="fas fa-hand-holding-heart" style="color: #e11d48;"></i> Por que apoiar?</h3>
+                
+                <div class="info-section">
+                    <p>O <b>Chuchuzeiro</b> não é apenas um controle de colheitas. É um software ético, feito para o produtor rural que valoriza <b>privacidade, simplicidade e liberdade</b>.</p>
+                    
+                    <h4><i class="fas fa-user-shield"></i> Privacidade Radical</h4>
+                    <p>A maioria dos apps envia seus dados financeiros para a nuvem. Aqui, usamos <b>IndexedDB</b> (banco de dados local). <b>Nenhuma informação sai do seu celular</b>. Nem mesmo nós temos acesso.</p>
 
-        <div class="card">
-            <h3><i>💡</i> Dicas de Uso</h3>
-            <ul class="info-list">
-                <li><b>Funciona Offline:</b> Você pode registrar colheitas e gastos sem internet. Os dados ficam salvos no seu aparelho.</li>
-                <li><b>Relatórios PDF:</b> Na aba Relatórios (ícone de engrenagem), você pode baixar um PDF completo do mês para enviar ao contador ou arquivar.</li>
-                <li><b>Segurança:</b> Faça "Backup JSON" semanalmente e salve no seu e-mail ou Google Drive para garantir que nunca perderá seus dados caso troque de celular.</li>
-                <li><b>Controle:</b> Use a aba de relatórios para ver se sua margem de lucro está positiva ou negativa no mês atual.</li>
-            </ul>
-        </div>
+                    <h4><i class="fas fa-tachometer-alt"></i> Performance Extrema</h4>
+                    <p>Todo o app roda com aceleração de hardware (GPU). As telas são fluidas e a bateria dura mais – essencial para quem trabalha no campo.</p>
 
-        <div class="card">
-            <h3><i>🔒</i> Privacidade</h3>
-            <p style="font-size: 0.9rem; color: #555; line-height: 1.5;">
-                O Chuchuzeiro é um aplicativo seguro e privado. <b>Todos os seus dados (valores, datas, anotações) ficam gravados apenas na memória do seu navegador/celular.</b>
-                Nós não temos servidores e não coletamos nenhuma informação sua. Se você limpar os dados do navegador sem fazer backup, suas informações serão apagadas.
-            </p>
-        </div>
-
-        <div class="card">
-            <h3><i>🚀</i> Personalizações</h3>
-            <p style="font-size: 0.9rem; color: #555; margin-bottom: 15px;">
-                Precisa de um recurso novo, logotipo da sua fazenda ou uma versão customizada? Entre em contato para atualizações.
-            </p>
-            <button class="btn-wpp" onclick="pedirAtualizacao()">💬 Quero atualizações</button>
-        </div>
-    </div>
-
-</div>
-
-<nav>
-    <div class="nav-buttons">
-        <div class="tab active" onclick="navTo('v-venda',this)"><i>📦</i><span>Colheita</span></div>
-        <div class="tab" onclick="navTo('v-gasto',this)"><i>💸</i><span>Despesas</span></div>
-        <div class="tab" onclick="navTo('v-consulta',this)"><i>📈</i><span>RELATÓRIOS</span></div>
-        <div class="tab" onclick="navTo('v-doacao',this)"><i>💜</i><span>Sobre</span></div>
-    </div>
-</nav>
-
-<div id="custom-modal" class="modal-overlay">
-    <div class="modal-box">
-        <span class="modal-icon" id="modal-icon">🤔</span>
-        <div class="modal-title" id="modal-title">Título</div>
-        <div class="modal-desc" id="modal-desc">Descrição</div>
-        <div class="modal-actions">
-            <button class="btn-sec" id="modal-btn-cancel">Cancelar</button>
-            <button class="btn-v" id="modal-btn-confirm">Confirmar</button>
-        </div>
-    </div>
-</div>
-
-<div id="toast">Notificação</div>
-
-<script>
-    let db;
-    let chartInstance;
-    const DB_NAME = "ChuchuProDB_v2";
-    const DB_VERSION = 1;
-    const FORMAT_BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-    const BACKUP_KEY = "chuchu_last_backup_date";
-    const AUTO_BACKUP_KEY = "chuchu_auto_mirror";
-    let pendingAction = null;
-
-    document.addEventListener("DOMContentLoaded", () => {
-        initDB();
-        setTodayDate();
-        verificarBackupSemanal();
+                    <h4><i class="fas fa-wifi-slash"></i> Soberania Digital (Offline)</h4>
+                    <p>Sem internet? Sem problema. O Chuchuzeiro funciona no modo avião, na roça ou no transporte da colheita. Seus backups (JSON) são seus – você decide onde guardar.</p>
+                    
+                    <div class="privacy-box" style="background: #fff1f2; border-color: #e11d48; color: #9f1239;">
+                        <p><i class="fas fa-mug-hot"></i> <b>100% gratuito e sem anúncios</b><br>
+                        Este projeto é mantido com doações de usuários como você. Desenvolver tecnologia agrícola de qualidade exige centenas de horas. Se o Chuchuzeiro ajuda sua gestão, considere apoiar.</p>
+                    </div>
+                </div>
         
-        // PWA: Registro do Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registrado:', reg.scope))
-                .catch(err => console.error('Erro ao registrar Service Worker:', err));
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                    <button class="btn-tutorial" onclick="openTutorialModal()">
+                        <i class="fas fa-book-reader"></i> Tutorial: Conheça todos os recursos
+                    </button>
+
+                    <button class="btn-pix" onclick="openPixModal()">
+                        <i class="fas fa-qrcode"></i> Apoiar via PIX (QR Code)
+                    </button>
+
+                    <button class="btn-mp" onclick="window.open('https://link.mercadopago.com.br/cuecasa', '_blank')">
+                        <i class="fas fa-credit-card"></i> Apoiar via Cartão/MP
+                    </button>
+                    <button class="btn-wpp" onclick="window.open('https://wa.me/5547996057007?text=Quero%20suporte%20do%20app%20chuchuzeiro', '_blank')">
+                        <i class="fab fa-whatsapp"></i> Contato do Desenvolvedor
+                    </button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px; color: #9ca3af; font-size: 0.7rem;">
+                    Versão 2.0 • Feito com 🌱 para agricultura familiar<br>
+                    <i class="fas fa-shield-alt"></i> Dados 100% no seu dispositivo
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <div class="nav-buttons">
+            <div class="tab active" onclick="navTo('v-venda',this)"><i class="fas fa-seedling"></i><span>Colheita</span></div>
+            <div class="tab" onclick="navTo('v-gasto',this)"><i class="fas fa-tools"></i><span>Despesas</span></div>
+            <div class="tab" onclick="navTo('v-consulta',this)"><i class="fas fa-chart-bar"></i><span>Relatórios</span></div>
+            <div class="tab" onclick="navTo('v-apoie',this)"><i class="fas fa-heart"></i><span>Apoie</span></div>
+        </div>
+    </nav>
+
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="modal-icon" id="modal-icon">🤔</span>
+            <div class="modal-title" id="modal-title">Título</div>
+            <div class="modal-desc" id="modal-desc">Descrição</div>
+            <div class="modal-actions">
+                <button class="btn-sec" id="modal-btn-cancel">Cancelar</button>
+                <button class="btn-v" id="modal-btn-confirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast">Notificação</div>
+
+    <script>
+        // -------------------- PREVENÇÃO DE MULTIPLAS ABAS (BroadcastChannel) --------------------
+        const channel = new BroadcastChannel('chuchuzeiro_auth');
+        channel.postMessage('ping');
+        channel.onmessage = (event) => {
+            if (event.data === 'ping') channel.postMessage('pong');
+            else if (event.data === 'pong') {
+                document.body.innerHTML = '<div style="display:flex;height:100vh;align-items:center;justify-content:center;"><h1>⚠️ App já aberto</h1></div>';
+                window.stop();
+            }
+        };
+
+        // -------------------- VAR GLOBAIS --------------------
+        let db;
+        let chartInstance;
+        const DB_NAME = "ChuchuProDB_v2";
+        const DB_VERSION = 1;
+        const FORMAT_BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+        const BACKUP_KEY = "chuchu_last_backup_date";
+        const AUTO_BACKUP_KEY = "chuchu_auto_mirror";
+        let pendingAction = null;
+
+        // -------------------- UTILITÁRIOS --------------------
+        function removerAcentos(str) {
+            if (!str) return "";
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        }
+        function getUserName() {
+            return localStorage.getItem('chuchuzeiro_user_name') || "Produtor";
+        }
+        function getSafeFileName() {
+            return getUserName().replace(/[^a-z0-9]/gi, '_');
         }
 
-        // Setup Modal Listeners
+        // -------------------- MODAIS (boas vindas, tutorial, pix) --------------------
+        function checkUser() {
+            const user = localStorage.getItem('chuchuzeiro_user_name');
+            if (!user) {
+                document.getElementById('welcome-modal').style.display = 'flex';
+            } else {
+                updateUserUI(user);
+            }
+        }
+        function salvarUsuario() {
+            const name = document.getElementById('user-name-input').value.trim();
+            if (!name) return alert("Por favor, digite um nome.");
+            localStorage.setItem('chuchuzeiro_user_name', name);
+            document.getElementById('welcome-modal').style.display = 'none';
+            updateUserUI(name);
+            showToast(`Bem-vindo, ${name}!`, 'success');
+        }
+        function updateUserUI(name) {
+            const el = document.getElementById('user-greeting');
+            el.innerText = `🌱 Olá, ${name}`;
+            el.style.display = 'block';
+        }
+
+        function openTutorialModal() { document.getElementById('tutorial-modal').style.display = 'flex'; }
+        function closeTutorialModal() { document.getElementById('tutorial-modal').style.display = 'none'; }
+        function openPixModal() { document.getElementById('pix-modal').style.display = 'flex'; }
+        function closePixModal() { document.getElementById('pix-modal').style.display = 'none'; }
+
+        // -------------------- TOAST --------------------
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById("toast");
+            t.innerHTML = (type === 'success' ? '✅ ' : '⚠️ ') + msg;
+            t.style.opacity = 1;
+            setTimeout(() => t.style.opacity = 0, 3000);
+        }
+
+        // -------------------- CONFIRMAÇÃO MODAL --------------------
+        function confirmAction(title, desc, action, icon = '⚠️', confirmColor = null) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-icon').innerText = icon;
+            const btn = document.getElementById('modal-btn-confirm');
+            btn.style.background = confirmColor || 'var(--p)';
+            pendingAction = action;
+            document.getElementById('custom-modal').classList.add('open');
+        }
+        function closeModal() {
+            document.getElementById('custom-modal').classList.remove('open');
+            pendingAction = null;
+        }
         document.getElementById('modal-btn-cancel').onclick = closeModal;
         document.getElementById('modal-btn-confirm').onclick = () => {
             if(pendingAction) pendingAction();
             closeModal();
         };
-    });
 
-    function setTodayDate() {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('dv').value = today;
-        document.getElementById('dg').value = today;
-    }
-
-    // --- INDEXEDDB ---
-    function initDB() {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-        request.onupgradeneeded = e => {
-            db = e.target.result;
-            if(!db.objectStoreNames.contains("vendas")) db.createObjectStore("vendas", { keyPath: "id", autoIncrement: true });
-            if(!db.objectStoreNames.contains("gastos")) db.createObjectStore("gastos", { keyPath: "id", autoIncrement: true });
-        };
-        request.onsuccess = e => { db = e.target.result; popularFiltroMeses(); };
-    }
-
-    function transaction(storeName, mode) { return db.transaction(storeName, mode).objectStore(storeName); }
-    function getAll(storeName) {
-        return new Promise(resolve => {
-            if(!db) return resolve([]);
-            const req = transaction(storeName, "readonly").getAll();
-            req.onsuccess = () => resolve(req.result);
-        });
-    }
-
-    // --- UI HELPERS ---
-    function showToast(msg, type) {
-        const t = document.getElementById("toast");
-        t.innerHTML = type === 'success' ? '✅ ' + msg : '⚠️ ' + msg;
-        t.className = `show ${type}`;
-        setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
-    }
-
-    function confirmAction(title, desc, action, icon='⚠️', confirmColor=null) {
-        document.getElementById('modal-title').innerText = title;
-        document.getElementById('modal-desc').innerText = desc;
-        document.getElementById('modal-icon').innerText = icon;
-        const btn = document.getElementById('modal-btn-confirm');
-        btn.style.background = confirmColor || 'var(--p)';
-        
-        pendingAction = action;
-        document.getElementById('custom-modal').classList.add('open');
-    }
-
-    function closeModal() {
-        document.getElementById('custom-modal').classList.remove('open');
-        pendingAction = null;
-    }
-
-    function navTo(viewId, tabEl) {
-        document.querySelectorAll('.view, .tab').forEach(el => el.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-        tabEl.classList.add('active');
-        if(viewId === 'v-consulta') {
-             popularFiltroMeses().then(render);
+        // -------------------- INDEXED DB (igual ao original) --------------------
+        function initDB() {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            request.onupgradeneeded = e => {
+                db = e.target.result;
+                if(!db.objectStoreNames.contains("vendas")) db.createObjectStore("vendas", { keyPath: "id", autoIncrement: true });
+                if(!db.objectStoreNames.contains("gastos")) db.createObjectStore("gastos", { keyPath: "id", autoIncrement: true });
+            };
+            request.onsuccess = e => { 
+                db = e.target.result; 
+                popularFiltroMeses();
+                render();
+                verificarBackupSemanal();
+            };
         }
-    }
 
-    function toggleConfig() { 
-        const el = document.getElementById('config-area');
-        el.style.display = el.style.display === 'none' ? 'block' : 'none';
-    }
-
-    // --- DATA LOGIC ---
-    function isDataFutura(dateString) {
-        const inputDate = new Date(dateString + 'T00:00:00');
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        return inputDate > today;
-    }
-
-    function salvarVenda() {
-        const id = document.getElementById('venda-id').value;
-        const q = parseFloat(document.getElementById('q').value);
-        const p = parseFloat(document.getElementById('p').value);
-        const dt = document.getElementById('dv').value;
-
-        if(!q || !p || !dt) return showToast("Preencha todos os campos", "error");
-        if(isDataFutura(dt)) return showToast("Data futura não permitida", "error");
-
-        const item = { q, p, dt, t: (q * p) };
-        if(id) item.id = parseInt(id);
-
-        transaction("vendas", "readwrite").put(item).onsuccess = () => {
-            showToast(id ? "Venda atualizada" : "Venda registrada", "success");
-            espelharDadosAutomatico();
-            resetForm('vendas');
-            render();
-        };
-    }
-
-    function salvarGasto() {
-        const id = document.getElementById('gasto-id').value;
-        const d = document.getElementById('d').value;
-        const v = parseFloat(document.getElementById('v').value);
-        const dt = document.getElementById('dg').value;
-
-        if(!d || !v || !dt) return showToast("Preencha todos os campos", "error");
-        if(isDataFutura(dt)) return showToast("Data futura não permitida", "error");
-
-        const item = { d, v, dt };
-        if(id) item.id = parseInt(id);
-
-        transaction("gastos", "readwrite").put(item).onsuccess = () => {
-            showToast(id ? "Gasto atualizado" : "Gasto registrado", "success");
-            espelharDadosAutomatico();
-            resetForm('gastos');
-            render();
-        };
-    }
-
-    // --- LISTING & RENDERING (NOVO DOM SEGURO) ---
-    async function render() {
-        if(document.getElementById('filtroMes').options.length === 0) await popularFiltroMeses();
-        
-        const filtro = document.getElementById('filtroMes').value;
-        const allV = await getAll("vendas");
-        const allG = await getAll("gastos");
-        const v = allV.filter(i => i.dt.startsWith(filtro));
-        const g = allG.filter(i => i.dt.startsWith(filtro));
-
-        // Totais
-        const tCx = v.reduce((sum, i) => sum + i.q, 0);
-        const tV = v.reduce((sum, i) => sum + i.t, 0);
-        const tG = g.reduce((sum, i) => sum + i.v, 0);
-        const saldo = tV - tG;
-        
-        // Margin Calculation
-        const margin = tV > 0 ? ((saldo / tV) * 100).toFixed(0) : 0;
-        
-        // Update Dash
-        animateValue("dash-cx", parseInt(document.getElementById('dash-cx').innerText), tCx, "");
-        document.getElementById('dash-rs').innerText = FORMAT_BRL.format(saldo);
-        document.getElementById('dash-rs').style.color = saldo >= 0 ? '#1b5e20' : '#c62828';
-        
-        document.getElementById('dash-margin').innerText = margin + "%";
-        document.getElementById('dash-margin').style.color = margin > 0 ? 'var(--p)' : (margin < 0 ? 'var(--s)' : '#666');
-        
-        document.getElementById('dash-in').innerText = FORMAT_BRL.format(tV);
-        document.getElementById('dash-out').innerText = FORMAT_BRL.format(tG);
-
-        // List
-        const lista = document.getElementById('lista-detalhada');
-        lista.innerHTML = '';
-        
-        const combined = [
-            ...v.map(i => ({...i, type: 'vendas'})),
-            ...g.map(i => ({...i, type: 'gastos'}))
-        ].sort((a,b) => new Date(b.dt) - new Date(a.dt) || b.id - a.id);
-
-        if (combined.length === 0) {
-            lista.innerHTML = '<div class="empty-state">📭 Nenhum registro neste mês.</div>';
-        } else {
-            combined.forEach(item => {
-                const el = criarElementoLista(item);
-                lista.appendChild(el);
+        function transaction(storeName, mode) { return db.transaction(storeName, mode).objectStore(storeName); }
+        function getAll(storeName) {
+            return new Promise(resolve => {
+                if(!db) return resolve([]);
+                const req = transaction(storeName, "readonly").getAll();
+                req.onsuccess = () => resolve(req.result);
             });
         }
-        
-        atualizarGrafico(v, g);
-    }
 
-    function criarElementoLista(item) {
-        const isV = item.type === 'vendas';
-        const val = isV ? item.t : item.v;
-        const dia = item.dt.split('-')[2];
-        const mesAbrev = new Date(item.dt).toLocaleString('pt-BR', {month:'short'}).replace('.','');
-        
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.innerHTML = `
-            <div class="item-date-box">
-                <span>${mesAbrev}</span>
-                <strong>${dia}</strong>
-            </div>
-            <div class="item-desc">
-                <b>${isV ? item.q + ' Caixas' : item.d}</b>
-                <small>${isV ? FORMAT_BRL.format(item.p) + '/un' : 'Despesa'}</small>
-            </div>
-            <div class="item-value">
-                <b style="color:${isV?'var(--p)':'var(--s)'}">${isV?'+':'-'} ${FORMAT_BRL.format(val)}</b>
-                <div class="actions">
-                    <span class="btn-mini edit">Editar</span>
-                    <span class="btn-mini del">✕</span>
-                </div>
-            </div>
-        `;
+        // -------------------- DATAS --------------------
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dv').value = today;
+            document.getElementById('dg').value = today;
+        }
+        function isDataFutura(dateString) {
+            const inputDate = new Date(dateString + 'T00:00:00');
+            const today = new Date(); today.setHours(0,0,0,0);
+            return inputDate > today;
+        }
 
-        div.querySelector('.edit').onclick = () => editarItem(item.type, item.id);
-        div.querySelector('.del').onclick = () => confirmAction("Apagar Item", "Deseja remover este registro?", () => apagarItem(item.type, item.id), '🗑️', '#ef4444');
-        
-        return div;
-    }
+        // -------------------- CRUD VENDAS --------------------
+        function salvarVenda() {
+            const id = document.getElementById('venda-id').value;
+            const q = parseFloat(document.getElementById('q').value);
+            const p = parseFloat(document.getElementById('p').value);
+            const dt = document.getElementById('dv').value;
+            if(!q || !p || !dt) return showToast("Preencha todos os campos", "error");
+            if(isDataFutura(dt)) return showToast("Data futura não permitida", "error");
+            const item = { q, p, dt, t: (q * p) };
+            if(id) item.id = parseInt(id);
+            transaction("vendas", "readwrite").put(item).onsuccess = () => {
+                showToast(id ? "Venda atualizada" : "Venda registrada", "success");
+                espelharDadosAutomatico();
+                resetForm('vendas');
+                render();
+            };
+        }
 
-    function animateValue(id, start, end, suffix) {
-        if (start === end) return;
-        const range = end - start;
-        let current = start;
-        const increment = end > start ? 1 : -1;
-        const stepTime = Math.abs(Math.floor(1000 / range));
-        const obj = document.getElementById(id);
-        const timer = setInterval(function() {
-            current += increment;
-            obj.innerHTML = current + suffix;
-            if (current == end) clearInterval(timer);
-        }, Math.max(stepTime, 20));
-        setTimeout(() => { clearInterval(timer); obj.innerHTML = end + suffix; }, 1000);
-    }
+        function salvarGasto() {
+            const id = document.getElementById('gasto-id').value;
+            const d = document.getElementById('d').value;
+            const v = parseFloat(document.getElementById('v').value);
+            const dt = document.getElementById('dg').value;
+            if(!d || !v || !dt) return showToast("Preencha todos os campos", "error");
+            if(isDataFutura(dt)) return showToast("Data futura não permitida", "error");
+            const item = { d, v, dt };
+            if(id) item.id = parseInt(id);
+            transaction("gastos", "readwrite").put(item).onsuccess = () => {
+                showToast(id ? "Gasto atualizado" : "Gasto registrado", "success");
+                espelharDadosAutomatico();
+                resetForm('gastos');
+                render();
+            };
+        }
 
-    // --- CHART ---
-    function atualizarGrafico(vendas, gastos) {
-        const ctx = document.getElementById('graficoLinha').getContext('2d');
-        if(chartInstance) chartInstance.destroy();
-        
-        const map = {};
-        vendas.forEach(i => { 
-            const d = parseInt(i.dt.split('-')[2]); 
-            if(!map[d]) map[d] = 0;
-            map[d] += i.q; 
-        });
-        
-        const labels = Object.keys(map).map(Number).sort((a,b)=>a-b);
-        
-        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(27, 94, 32, 0.2)');
-        gradient.addColorStop(1, 'rgba(27, 94, 32, 0.0)');
-
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Caixas',
-                    data: labels.map(d=>map[d]),
-                    borderColor: '#1b5e20',
-                    backgroundColor: gradient,
-                    borderWidth: 2,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#1b5e20',
-                    pointRadius: 4,
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-                scales: { 
-                    y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { font: {size: 10} } }, 
-                    x: { grid: { display: false }, ticks: { font: {size: 10} } } 
-                },
-                interaction: { mode: 'nearest', axis: 'x', intersect: false }
-            }
-        });
-    }
-
-    // --- EDIT & DELETE ---
-    function editarItem(type, id) {
-        transaction(type, "readonly").get(id).onsuccess = (e) => {
-            const data = e.target.result;
-            if (type === 'vendas') {
-                document.getElementById('venda-id').value = data.id;
-                document.getElementById('q').value = data.q;
-                document.getElementById('p').value = data.p;
-                document.getElementById('dv').value = data.dt;
-                
-                document.getElementById('titulo-venda').innerHTML = "<i>✏️</i> Editando Venda";
+        // -------------------- RESET E CANCEL --------------------
+        function resetForm(type) {
+            setTodayDate();
+            if(type === 'vendas') {
+                document.getElementById('venda-id').value = "";
+                document.getElementById('q').value = "";
+                document.getElementById('p').value = "";
+                document.getElementById('titulo-venda').innerHTML = '<i class="fas fa-seedling" style="color: var(--p);"></i> Registrar Colheita';
                 const btn = document.getElementById('btn-acao-venda');
-                btn.innerText = "Salvar Alterações";
-                btn.className = "btn-update";
-                document.getElementById('btn-cancel-venda').style.display = 'block';
-                navTo('v-venda', document.querySelectorAll('.tab')[0]);
+                btn.innerHTML = '<i class="fas fa-check"></i> Confirmar Venda';
+                btn.className = "btn-income";
+                document.getElementById('btn-cancel-venda').style.display = 'none';
             } else {
-                document.getElementById('gasto-id').value = data.id;
-                document.getElementById('d').value = data.d;
-                document.getElementById('v').value = data.v;
-                document.getElementById('dg').value = data.dt;
-                
-                document.getElementById('titulo-gasto').innerHTML = "<i>✏️</i> Editando Gasto";
+                document.getElementById('gasto-id').value = "";
+                document.getElementById('d').value = "";
+                document.getElementById('v').value = "";
+                document.getElementById('titulo-gasto').innerHTML = '<i class="fas fa-tools" style="color: var(--expense);"></i> Registrar Despesa';
                 const btn = document.getElementById('btn-acao-gasto');
-                btn.innerText = "Salvar Alterações";
-                btn.className = "btn-update";
-                document.getElementById('btn-cancel-gasto').style.display = 'block';
-                navTo('v-gasto', document.querySelectorAll('.tab')[1]);
+                btn.innerHTML = '<i class="fas fa-money-bill-wave"></i> Registrar Gasto';
+                btn.className = "btn-expense";
+                document.getElementById('btn-cancel-gasto').style.display = 'none';
             }
-        };
-    }
-
-    function cancelarEdicao(type) { resetForm(type); }
-
-    function resetForm(type) {
-        setTodayDate();
-        if(type === 'vendas') {
-            document.getElementById('venda-id').value = "";
-            document.getElementById('q').value = "";
-            document.getElementById('p').value = "";
-            document.getElementById('titulo-venda').innerHTML = "<i>📦</i> Registrar Colheita";
-            const btn = document.getElementById('btn-acao-venda');
-            btn.innerText = "Confirmar Venda";
-            btn.className = "btn-v";
-            document.getElementById('btn-cancel-venda').style.display = 'none';
-        } else {
-            document.getElementById('gasto-id').value = "";
-            document.getElementById('d').value = "";
-            document.getElementById('v').value = "";
-            document.getElementById('titulo-gasto').innerHTML = "<i>💸</i> Registrar Despesa";
-            const btn = document.getElementById('btn-acao-gasto');
-            btn.innerText = "Registrar Gasto";
-            btn.className = "btn-d";
-            document.getElementById('btn-cancel-gasto').style.display = 'none';
-        }
-    }
-
-    function apagarItem(type, id) {
-        transaction(type, "readwrite").delete(id).onsuccess = () => {
-            showToast("Item removido", "success");
-            espelharDadosAutomatico();
-            render();
-        };
-    }
-
-    // --- FILTROS ---
-    async function popularFiltroMeses() {
-        const vendas = await getAll("vendas");
-        const gastos = await getAll("gastos");
-        const todos = [...vendas, ...gastos];
-        const meses = [...new Set(todos.map(i => i.dt.slice(0, 7)))].sort().reverse();
-        
-        const select = document.getElementById('filtroMes');
-        const valorAtual = select.value;
-        select.innerHTML = "";
-
-        if(meses.length === 0) {
-            const hoje = new Date().toISOString().slice(0,7);
-            meses.push(hoje);
         }
 
-        meses.forEach(mes => {
-            const [ano, m] = mes.split('-');
-            const nomeMes = new Date(ano, m - 1).toLocaleString('pt-BR', { month: 'long' });
-            const opt = document.createElement('option');
-            opt.value = mes;
-            opt.text = `${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)} ${ano}`;
-            select.appendChild(opt);
-        });
+        function cancelarEdicao(type) { resetForm(type); }
 
-        if(meses.includes(valorAtual)) select.value = valorAtual;
-    }
+        // -------------------- EDIÇÃO --------------------
+        function editarItem(type, id) {
+            transaction(type, "readonly").get(id).onsuccess = (e) => {
+                const data = e.target.result;
+                if (type === 'vendas') {
+                    document.getElementById('venda-id').value = data.id;
+                    document.getElementById('q').value = data.q;
+                    document.getElementById('p').value = data.p;
+                    document.getElementById('dv').value = data.dt;
+                    document.getElementById('titulo-venda').innerHTML = '<i class="fas fa-edit"></i> Editando Venda';
+                    const btn = document.getElementById('btn-acao-venda');
+                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> Salvar Alterações';
+                    btn.className = "btn-update";
+                    document.getElementById('btn-cancel-venda').style.display = 'block';
+                    navTo('v-venda', document.querySelectorAll('.tab')[0]);
+                } else {
+                    document.getElementById('gasto-id').value = data.id;
+                    document.getElementById('d').value = data.d;
+                    document.getElementById('v').value = data.v;
+                    document.getElementById('dg').value = data.dt;
+                    document.getElementById('titulo-gasto').innerHTML = '<i class="fas fa-edit"></i> Editando Gasto';
+                    const btn = document.getElementById('btn-acao-gasto');
+                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> Salvar Alterações';
+                    btn.className = "btn-update";
+                    document.getElementById('btn-cancel-gasto').style.display = 'block';
+                    navTo('v-gasto', document.querySelectorAll('.tab')[1]);
+                }
+            };
+        }
 
-    // --- BACKUP & PDF ---
-    async function espelharDadosAutomatico() {
-        try {
-            const v = await getAll("vendas");
-            const g = await getAll("gastos");
-            localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify({vendas: v, gastos: g}));
-        } catch (e) { console.error("Erro backup auto", e); }
-    }
+        function apagarItem(type, id) {
+            transaction(type, "readwrite").delete(id).onsuccess = () => {
+                showToast("Item removido", "success");
+                espelharDadosAutomatico();
+                render();
+            };
+        }
 
-    function verificarBackupSemanal() {
-        const lastBackup = localStorage.getItem(BACKUP_KEY);
-        const elLabel = document.getElementById('lbl-last-backup');
-        
-        if (lastBackup) {
-            elLabel.innerText = new Date(lastBackup).toLocaleDateString('pt-BR');
-            const diffDays = Math.ceil(Math.abs(new Date() - new Date(lastBackup)) / (86400000)); 
-            if (diffDays >= 7) document.getElementById('backup-alert').style.display = 'flex';
-        } else {
-            getAll("vendas").then(v => {
-                if (v.length > 0) document.getElementById('backup-alert').style.display = 'flex';
+        // -------------------- RENDERIZAÇÃO (igual original, adaptada para novos cards) --------------------
+        async function render() {
+            if (!db) return;
+            if (document.getElementById('filtroMes').options.length === 0) await popularFiltroMeses();
+            const filtro = document.getElementById('filtroMes').value;
+            const allV = await getAll("vendas");
+            const allG = await getAll("gastos");
+            const v = allV.filter(i => i.dt.startsWith(filtro));
+            const g = allG.filter(i => i.dt.startsWith(filtro));
+
+            const tCx = v.reduce((sum, i) => sum + i.q, 0);
+            const tV = v.reduce((sum, i) => sum + i.t, 0);
+            const tG = g.reduce((sum, i) => sum + i.v, 0);
+            const saldo = tV - tG;
+            const margin = tV > 0 ? ((saldo / tV) * 100).toFixed(0) : 0;
+
+            document.getElementById('dash-cx').innerText = tCx;
+            document.getElementById('dash-rs').innerText = FORMAT_BRL.format(saldo);
+            document.getElementById('dash-rs').style.color = saldo >= 0 ? '#1b5e20' : '#c62828';
+            document.getElementById('dash-margin').innerText = margin + "%";
+            document.getElementById('dash-margin').style.color = margin > 0 ? 'var(--p)' : (margin < 0 ? 'var(--expense)' : '#666');
+            document.getElementById('dash-in').innerText = FORMAT_BRL.format(tV);
+            document.getElementById('dash-out').innerText = FORMAT_BRL.format(tG);
+
+            // Lista
+            const lista = document.getElementById('lista-detalhada');
+            lista.innerHTML = '';
+            const combined = [
+                ...v.map(i => ({...i, type: 'vendas'})),
+                ...g.map(i => ({...i, type: 'gastos'}))
+            ].sort((a,b) => new Date(b.dt) - new Date(a.dt) || b.id - a.id);
+
+            if (combined.length === 0) {
+                lista.innerHTML = '<div class="empty-state" style="text-align:center; padding:20px; color:#9ca3af;">📭 Nenhum registro neste mês.</div>';
+            } else {
+                combined.forEach(item => {
+                    const el = criarElementoLista(item);
+                    lista.appendChild(el);
+                });
+            }
+            atualizarGrafico(v, g);
+        }
+
+        function criarElementoLista(item) {
+            const isV = item.type === 'vendas';
+            const val = isV ? item.t : item.v;
+            const dia = item.dt.split('-')[2];
+            const mesAbrev = new Date(item.dt).toLocaleString('pt-BR', {month:'short'}).replace('.','');
+            
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `
+                <div class="item-date-box">
+                    <span>${mesAbrev}</span>
+                    <strong>${dia}</strong>
+                </div>
+                <div class="item-desc">
+                    <b>${isV ? item.q + ' Caixas' : item.d}</b>
+                    <small>${isV ? FORMAT_BRL.format(item.p) + '/un' : 'Despesa'}</small>
+                </div>
+                <div class="item-value">
+                    <b style="color:${isV?'var(--income)':'var(--expense)'}">${isV?'+':'-'} ${FORMAT_BRL.format(val)}</b>
+                    <div class="actions" style="margin-top:6px; display:flex; gap:8px; justify-content:flex-end;">
+                        <span class="btn-mini edit" style="background:#e0f2fe; color:#0284c7; padding:4px 10px; border-radius:6px; font-size:0.7rem; font-weight:600; cursor:pointer;"><i class="fas fa-pen"></i> Editar</span>
+                        <span class="btn-mini del" style="background:#fee2e2; color:#dc2626; padding:4px 10px; border-radius:6px; font-size:0.7rem; font-weight:600; cursor:pointer;"><i class="fas fa-trash"></i> Excluir</span>
+                    </div>
+                </div>
+            `;
+            
+            div.querySelector('.edit').onclick = (e) => { e.stopPropagation(); editarItem(item.type, item.id); };
+            div.querySelector('.del').onclick = (e) => { e.stopPropagation(); confirmAction("Apagar Item", "Deseja remover este registro?", () => apagarItem(item.type, item.id), '🗑️', '#ef4444'); };
+            
+            return div;
+        }
+
+        // -------------------- GRÁFICO DE LINHA --------------------
+        function atualizarGrafico(vendas, gastos) {
+            const ctx = document.getElementById('graficoLinha').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            
+            const map = {};
+            vendas.forEach(i => { const d = parseInt(i.dt.split('-')[2]); map[d] = (map[d] || 0) + i.q; });
+            const labels = Object.keys(map).map(Number).sort((a,b)=>a-b);
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(27, 94, 32, 0.2)');
+            gradient.addColorStop(1, 'rgba(27, 94, 32, 0.0)');
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Caixas',
+                        data: labels.map(d=>map[d]),
+                        borderColor: '#1b5e20',
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#1b5e20',
+                        pointRadius: 4,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                    scales: { y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { font: {size: 10} } }, x: { grid: { display: false }, ticks: { font: {size: 10} } } },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
+                }
             });
         }
-    }
 
-    async function gerarRelatorioPDF() {
-        showToast("Gerando PDF...", "success");
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        const filtro = document.getElementById('filtroMes').value;
-        const [ano, mes] = filtro.split('-');
-        const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' });
-        
-        // Dados
-        const allV = await getAll("vendas");
-        const allG = await getAll("gastos");
-        const v = allV.filter(i => i.dt.startsWith(filtro));
-        const g = allG.filter(i => i.dt.startsWith(filtro));
-        
-        const totalV = v.reduce((s, i) => s + i.t, 0);
-        const totalG = g.reduce((s, i) => s + i.v, 0);
-        const saldo = totalV - totalG;
-        const totalCx = v.reduce((s, i) => s + i.q, 0);
+        // -------------------- FILTRO MÊS --------------------
+        async function popularFiltroMeses() {
+            const vendas = await getAll("vendas");
+            const gastos = await getAll("gastos");
+            const todos = [...vendas, ...gastos];
+            const meses = [...new Set(todos.map(i => i.dt.slice(0, 7)))].sort().reverse();
+            
+            const select = document.getElementById('filtroMes');
+            const valorAtual = select.value;
+            select.innerHTML = "";
 
-        // --- DESIGN DO PDF ---
-        doc.setFillColor(27, 94, 32); 
-        doc.rect(0, 0, 210, 40, 'F');
-        doc.setFontSize(22); doc.setTextColor(255, 255, 255);
-        doc.text("CHUCHUZEIRO", 14, 20); 
-        doc.setFontSize(12);
-        doc.text("Relatório Mensal: " + nomeMes.toUpperCase() + " / " + ano, 14, 30);
-        
-        let yPos = 55;
-        doc.setFillColor(232, 245, 233); doc.rect(14, yPos, 55, 25, 'F');
-        doc.setTextColor(27, 94, 32); doc.setFontSize(10); doc.text("ENTRADAS", 18, yPos + 8);
-        doc.setFontSize(14); doc.text(FORMAT_BRL.format(totalV), 18, yPos + 18);
-        
-        doc.setFillColor(255, 235, 238); doc.rect(77, yPos, 55, 25, 'F');
-        doc.setTextColor(198, 40, 40); doc.setFontSize(10); doc.text("SAÍDAS", 81, yPos + 8);
-        doc.setFontSize(14); doc.text(FORMAT_BRL.format(totalG), 81, yPos + 18);
-        
-        doc.setFillColor(243, 244, 246); doc.rect(140, yPos, 55, 25, 'F');
-        doc.setTextColor(31, 41, 55); doc.setFontSize(10); doc.text("SALDO FINAL", 144, yPos + 8);
-        doc.setFontSize(14); doc.text(FORMAT_BRL.format(saldo), 144, yPos + 18);
+            if(meses.length === 0) { meses.push(new Date().toISOString().slice(0,7)); }
 
-        doc.setTextColor(100); doc.setFontSize(9);
-        doc.text(`Total de Caixas Colhidas: ${totalCx}`, 14, yPos + 35);
-
-        const tableBody = [
-            ...v.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), `${i.q} Caixas`, `R$ ${i.p.toFixed(2)}`, `+ ${FORMAT_BRL.format(i.t)}`]),
-            ...g.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), i.d, '-', `- ${FORMAT_BRL.format(i.v)}`])
-        ].sort((a,b) => b[0].split('/').reverse().join('-').localeCompare(a[0].split('/').reverse().join('-')));
-
-        if(tableBody.length > 0) {
-            doc.autoTable({
-                startY: yPos + 40,
-                head: [['Data', 'Descrição', 'Unitário/Obs', 'Valor']],
-                body: tableBody,
-                theme: 'striped',
-                headStyles: { fillColor: [27, 94, 32] },
-                alternateRowStyles: { fillColor: [240, 250, 240] },
-                columnStyles: { 0: { cellWidth: 30 }, 3: { halign: 'right', fontStyle: 'bold' } }
+            meses.forEach(mes => {
+                const [ano, m] = mes.split('-');
+                const nomeMes = new Date(ano, m - 1).toLocaleString('pt-BR', { month: 'long' });
+                const opt = document.createElement('option');
+                opt.value = mes;
+                opt.text = `${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)} ${ano}`;
+                select.appendChild(opt);
             });
+
+            if(meses.includes(valorAtual)) select.value = valorAtual;
         }
-        
-        doc.save(`Relatorio_Chuchuzeiro_${filtro}.pdf`);
-    }
 
-    async function compartilharWhatsapp() {
-        showToast("Preparando relatório...", "success");
-        
-        const filtro = document.getElementById('filtroMes').value;
-        const [ano, mes] = filtro.split('-');
-        const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-        
-        const allV = await getAll("vendas");
-        const allG = await getAll("gastos");
-        const v = allV.filter(i => i.dt.startsWith(filtro));
-        const g = allG.filter(i => i.dt.startsWith(filtro));
-        
-        const totalV = v.reduce((s, i) => s + i.t, 0);
-        const totalG = g.reduce((s, i) => s + i.v, 0);
-        const saldo = totalV - totalG;
-        const totalCx = v.reduce((s, i) => s + i.q, 0);
-
-        let msg = `*RELATÓRIO CHUCHUZEIRO*\n`;
-        msg += `🗓 Período: ${nomeMes}/${ano}\n\n`;
-        msg += `✅ Entradas: ${FORMAT_BRL.format(totalV)}\n`;
-        msg += `🔻 Saídas: ${FORMAT_BRL.format(totalG)}\n`;
-        msg += `💰 *Saldo: ${FORMAT_BRL.format(saldo)}*\n`;
-        msg += `📦 Caixas Colhidas: ${totalCx}\n\n`;
-        msg += `_Gerado pelo App Chuchuzeiro_`;
-
-        if (navigator.share && navigator.canShare) {
+        // -------------------- BACKUP AUTOMÁTICO E ALERTA --------------------
+        async function espelharDadosAutomatico() {
             try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                doc.setFillColor(27, 94, 32); doc.rect(0, 0, 210, 40, 'F');
-                doc.setFontSize(22); doc.setTextColor(255, 255, 255); doc.text("CHUCHUZEIRO", 14, 20);
-                doc.setFontSize(12); doc.text(`Relatório: ${nomeMes}/${ano}`, 14, 30);
-                
-                doc.setTextColor(0); doc.setFontSize(14);
-                doc.text(`Entradas: ${FORMAT_BRL.format(totalV)}`, 14, 60);
-                doc.text(`Saídas: ${FORMAT_BRL.format(totalG)}`, 14, 70);
-                doc.text(`Saldo: ${FORMAT_BRL.format(saldo)}`, 14, 80);
-                
-                 const tableBody = [
-                    ...v.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), `${i.q} Cxs`, `+ ${FORMAT_BRL.format(i.t)}`]),
-                    ...g.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), i.d, `- ${FORMAT_BRL.format(i.v)}`])
-                ].sort((a,b) => b[0].split('/').reverse().join('-').localeCompare(a[0].split('/').reverse().join('-')));
-                
-                if(tableBody.length > 0) {
-                     doc.autoTable({
-                        startY: 90,
-                        head: [['Data', 'Desc', 'Valor']],
-                        body: tableBody,
-                        theme: 'striped',
-                        headStyles: { fillColor: [27, 94, 32] }
-                    });
-                }
+                const v = await getAll("vendas");
+                const g = await getAll("gastos");
+                localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify({vendas: v, gastos: g}));
+            } catch (e) { console.error("Erro backup auto", e); }
+        }
 
-                const pdfBlob = doc.output('blob');
-                const file = new File([pdfBlob], `Relatorio_${filtro}.pdf`, { type: "application/pdf" });
-
-                if (navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Relatório Mensal',
-                        text: msg
-                    });
-                    return; 
-                }
-            } catch (err) {
-                console.log("Erro no compartilhamento nativo, usando fallback de texto.", err);
+        function verificarBackupSemanal() {
+            const lastBackup = localStorage.getItem(BACKUP_KEY);
+            const elLabel = document.getElementById('lbl-last-backup'); // não usado, mas mantém
+            
+            if (lastBackup) {
+                const diffDays = Math.ceil(Math.abs(new Date() - new Date(lastBackup)) / (86400000)); 
+                if (diffDays >= 7) document.getElementById('backup-alert').style.display = 'flex';
+            } else {
+                getAll("vendas").then(v => { if (v.length > 0) document.getElementById('backup-alert').style.display = 'flex'; });
             }
         }
 
-        const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-        window.open(url, '_blank');
-    }
+        // -------------------- PDF PROFISSIONAL (adaptado do modelo) --------------------
+        async function gerarRelatorioPDF() {
+            showToast("Gerando PDF...");
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const filtro = document.getElementById('filtroMes').value;
+            const [ano, mes] = filtro.split('-');
+            const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+            
+            const allV = await getAll("vendas");
+            const allG = await getAll("gastos");
+            const v = allV.filter(i => i.dt.startsWith(filtro));
+            const g = allG.filter(i => i.dt.startsWith(filtro));
+            const totalV = v.reduce((s, i) => s + i.t, 0);
+            const totalG = g.reduce((s, i) => s + i.v, 0);
+            const saldo = totalV - totalG;
+            const totalCx = v.reduce((s, i) => s + i.q, 0);
 
-    // --- FUNÇÃO SUPORTE TÉCNICO ---
-    function abrirSuporte() {
-        const numero = "5547996057007";
-        const mensagem = encodeURIComponent("Quero suporte do app chuchuzeiro");
-        const url = `https://wa.me/${numero}?text=${mensagem}`;
-        window.open(url, '_blank');
-    }
+            // Cabeçalho verde
+            doc.setFillColor(27, 94, 32); 
+            doc.rect(0, 0, doc.internal.pageSize.getWidth(), 45, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.setFont("helvetica", 'bold');
+            doc.text("CHUCHUZEIRO", doc.internal.pageSize.getWidth()/2, 20, { align: 'center' });
+            doc.setFontSize(12);
+            doc.setFont("helvetica", 'normal');
+            doc.text(`${removerAcentos(getUserName())} • ${nomeMes}/${ano}`, doc.internal.pageSize.getWidth()/2, 35, { align: 'center' });
+            
+            let yPos = 55;
+            doc.setFillColor(232, 245, 233); doc.rect(14, yPos, 55, 25, 'F');
+            doc.setTextColor(27, 94, 32); doc.setFontSize(10); doc.text("ENTRADAS", 18, yPos+8);
+            doc.setFontSize(12); doc.text(FORMAT_BRL.format(totalV), 18, yPos+18);
+            
+            doc.setFillColor(255, 235, 238); doc.rect(77, yPos, 55, 25, 'F');
+            doc.setTextColor(198, 40, 40); doc.setFontSize(10); doc.text("SAÍDAS", 81, yPos+8);
+            doc.setFontSize(12); doc.text(FORMAT_BRL.format(totalG), 81, yPos+18);
+            
+            doc.setFillColor(243, 244, 246); doc.rect(140, yPos, 55, 25, 'F');
+            doc.setTextColor(31, 41, 55); doc.setFontSize(10); doc.text("SALDO FINAL", 144, yPos+8);
+            doc.setFontSize(12); doc.text(FORMAT_BRL.format(saldo), 144, yPos+18);
 
-    // --- FUNÇÕES DOAÇÃO & ATUALIZAÇÃO ---
-    function copiarPix() {
-        const pixKey = document.getElementById('pix-key');
-        pixKey.select();
-        pixKey.setSelectionRange(0, 99999); /* Para mobile */
-        navigator.clipboard.writeText(pixKey.value).then(() => {
-            showToast("Chave PIX copiada com sucesso!", "success");
-        });
-    }
+            doc.setTextColor(100); doc.setFontSize(9);
+            doc.text(`Total de Caixas: ${totalCx}`, 14, yPos + 35);
+            doc.text(`Margem de Lucro: ${totalV > 0 ? ((saldo/totalV)*100).toFixed(0) : 0}%`, 14, yPos + 42);
 
-    function abrirMercadoPago() {
-        window.open('https://link.mercadopago.com.br/cuecasa', '_blank');
-    }
+            const tableBody = [
+                ...v.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), `${i.q} Caixas`, `R$ ${i.p.toFixed(2)}`, `+ ${FORMAT_BRL.format(i.t)}`]),
+                ...g.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), i.d, '-', `- ${FORMAT_BRL.format(i.v)}`])
+            ].sort((a,b) => b[0].split('/').reverse().join('-').localeCompare(a[0].split('/').reverse().join('-')));
+            
+            if(tableBody.length > 0) {
+                doc.autoTable({
+                    startY: yPos + 50,
+                    head: [['Data', 'Descrição', 'Unitário/Obs', 'Valor']],
+                    body: tableBody,
+                    theme: 'striped',
+                    headStyles: { fillColor: [27, 94, 32], textColor: 255, fontStyle: 'bold' },
+                    columnStyles: { 0: { cellWidth: 30 }, 3: { halign: 'right', fontStyle: 'bold' } }
+                });
+            }
+            doc.save(`Chuchuzeiro_${getSafeFileName()}_${filtro}.pdf`);
+            showToast("PDF salvo!");
+        }
 
-    function pedirAtualizacao() {
-        const numero = "5547996057007";
-        const mensagem = encodeURIComponent("Quero atualizações do app chuchuzeiro");
-        const url = `https://wa.me/${numero}?text=${mensagem}`;
-        window.open(url, '_blank');
-    }
+        // -------------------- COMPARTILHAR WHATSAPP --------------------
+        async function compartilharWhatsapp() {
+            showToast("Preparando...");
+            const filtro = document.getElementById('filtroMes').value;
+            const [ano, mes] = filtro.split('-');
+            const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+            
+            const allV = await getAll("vendas");
+            const allG = await getAll("gastos");
+            const v = allV.filter(i => i.dt.startsWith(filtro));
+            const g = allG.filter(i => i.dt.startsWith(filtro));
+            
+            const totalV = v.reduce((s, i) => s + i.t, 0);
+            const totalG = g.reduce((s, i) => s + i.v, 0);
+            const saldo = totalV - totalG;
+            const totalCx = v.reduce((s, i) => s + i.q, 0);
 
-    function exportarManual() {
-        Promise.all([getAll("vendas"), getAll("gastos")]).then(([v, g]) => {
+            let msg = `*CHUCHUZEIRO - RELATÓRIO*\n`;
+            msg += `👤 ${getUserName()}\n🗓 ${nomeMes}/${ano}\n\n`;
+            msg += `📦 Caixas: ${totalCx}\n`;
+            msg += `✅ Entradas: ${FORMAT_BRL.format(totalV)}\n`;
+            msg += `🔻 Saídas: ${FORMAT_BRL.format(totalG)}\n`;
+            msg += `💰 *Saldo: ${FORMAT_BRL.format(saldo)}*\n`;
+            msg += `📊 Margem: ${totalV > 0 ? ((saldo/totalV)*100).toFixed(0) : 0}%\n\n`;
+            msg += `_Gerado pelo App Chuchuzeiro_`;
+
+            const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+        // -------------------- EXPORTAR/IMPORTAR BACKUP --------------------
+        async function exportarManual() {
+            const [v, g] = await Promise.all([getAll("vendas"), getAll("gastos")]);
             const dataHoje = new Date().toISOString().split('T')[0];
             const blob = new Blob([JSON.stringify({vendas: v, gastos: g})], {type: "application/json"});
             const a = document.createElement("a");
             a.href = URL.createObjectURL(blob);
-            a.download = `Chuchuzeiro_Backup_${dataHoje}.json`;
+            a.download = `Chuchuzeiro_Backup_${getSafeFileName()}_${dataHoje}.json`;
             a.click();
             
             localStorage.setItem(BACKUP_KEY, new Date().toISOString());
             document.getElementById('backup-alert').style.display = 'none';
-            document.getElementById('lbl-last-backup').innerText = new Date().toLocaleDateString('pt-BR');
-            showToast("Backup salvo!", "success");
-        });
-    }
+            showToast("Backup salvo!");
+        }
 
-    function iniciarImportacao(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-        
-        confirmAction("Restaurar Dados", "Isso irá mesclar os dados do arquivo com os dados atuais.", () => {
-             const reader = new FileReader();
-             reader.onload = f => {
-                 try {
-                     const data = JSON.parse(f.target.result);
-                     const txV = db.transaction("vendas", "readwrite");
-                     data.vendas.forEach(i => { delete i.id; txV.objectStore("vendas").put(i); });
-                     
-                     const txG = db.transaction("gastos", "readwrite");
-                     data.gastos.forEach(i => { delete i.id; txG.objectStore("gastos").put(i); });
-                     
-                     txG.oncomplete = () => { 
-                         showToast("Dados restaurados!", "success"); 
-                         espelharDadosAutomatico();
-                         render(); 
-                     };
-                 } catch(err) { showToast("Arquivo inválido", "error"); }
-             };
-             reader.readAsText(file);
-        }, '📥');
-    }
+        function iniciarImportacao(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            
+            confirmAction("Restaurar Dados", "Isso irá mesclar os dados do arquivo com os dados atuais.", () => {
+                const reader = new FileReader();
+                reader.onload = f => {
+                    try {
+                        const data = JSON.parse(f.target.result);
+                        const txV = db.transaction("vendas", "readwrite");
+                        data.vendas.forEach(i => { delete i.id; txV.objectStore("vendas").put(i); });
+                        const txG = db.transaction("gastos", "readwrite");
+                        data.gastos.forEach(i => { delete i.id; txG.objectStore("gastos").put(i); });
+                        txG.oncomplete = () => { showToast("Dados restaurados!"); espelharDadosAutomatico(); render(); };
+                    } catch(err) { showToast("Arquivo inválido", "error"); }
+                };
+                reader.readAsText(file);
+            }, '📥');
+        }
 
-    function limparBancoDados() {
-        const tx = db.transaction(["vendas", "gastos"], "readwrite");
-        tx.objectStore("vendas").clear();
-        tx.objectStore("gastos").clear();
-        tx.oncomplete = () => { 
-            localStorage.removeItem(AUTO_BACKUP_KEY); 
-            showToast("Tudo limpo!", "success"); 
-            render(); 
+        function limparBancoDados() {
+            const tx = db.transaction(["vendas", "gastos"], "readwrite");
+            tx.objectStore("vendas").clear();
+            tx.objectStore("gastos").clear();
+            tx.oncomplete = () => { 
+                localStorage.removeItem(AUTO_BACKUP_KEY); 
+                showToast("Tudo limpo!"); 
+                render(); 
+            };
+        }
+
+        // -------------------- NAVEGAÇÃO ENTRE ABAS --------------------
+        function navTo(viewId, tabEl) {
+            document.querySelectorAll('.view, .tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            tabEl.classList.add('active');
+            if(viewId === 'v-consulta') {
+                popularFiltroMeses().then(render);
+            }
+        }
+
+        // -------------------- INICIALIZAÇÃO --------------------
+        window.onload = () => {
+            initDB();
+            setTodayDate();
+            checkUser();
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            }
         };
-    }
-</script>
+    </script>
 </body>
 </html>
