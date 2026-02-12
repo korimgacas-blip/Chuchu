@@ -108,35 +108,35 @@
         .card:active { transform: scale(0.99) translateZ(0); }
 
         input, select { 
-            width: 100%; 
-            padding: 14px; 
-            border-radius: 12px; 
-            border: 1px solid #e5e7eb; 
-            background: #f9fafb; 
-            margin-bottom: 15px; 
-            font-size: 16px; 
-            transition: all 0.2s;
+             width: 100%; 
+             padding: 14px; 
+             border-radius: 12px; 
+             border: 1px solid #e5e7eb; 
+             background: #f9fafb; 
+             margin-bottom: 15px; 
+             font-size: 16px; 
+             transition: all 0.2s;
         }
         input:focus, select:focus { 
-            border-color: var(--p); 
-            box-shadow: 0 0 0 3px rgba(27,94,32,0.1); 
-            outline: none; 
-            background: white;
+             border-color: var(--p); 
+             box-shadow: 0 0 0 3px rgba(27,94,32,0.1); 
+             outline: none; 
+             background: white;
         }
 
         button { 
-            width: 100%; 
-            padding: 15px; 
-            border-radius: 12px; 
-            border: none; 
-            font-weight: 700; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            transition: all 0.2s; 
-        }
+             width: 100%; 
+             padding: 15px; 
+             border-radius: 12px; 
+             border: none; 
+             font-weight: 700; 
+             cursor: pointer; 
+             display: flex; 
+             align-items: center; 
+             justify-content: center; 
+             gap: 8px; 
+             transition: all 0.2s; 
+         }
         button:active { transform: scale(0.98); opacity: 0.9; }
 
         .btn-income { background: var(--income); color: white; }
@@ -151,30 +151,32 @@
         .btn-pdf { background: #374151; color: white; }
         .btn-update { background: #f59e0b; color: white; }
 
-        /* Navegação inferior flutuante */
+        /* Navegação inferior flutuante - GLASS AJUSTADO */
         nav {
             position: fixed; bottom: 20px; left: 16px; right: 16px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.70); /* Mais transparente */
+            backdrop-filter: blur(15px); /* Mais blur */
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.3);
             border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             z-index: 100;
             transform: translateZ(0);
         }
         .nav-buttons { display: flex; height: 70px; justify-content: space-around; align-items: center; }
-        .tab { color: #9ca3af; font-size: 0.65rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; transition: color 0.2s; }
+        .tab { color: #6b7280; font-size: 0.65rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; transition: color 0.2s; }
         .tab.active { color: var(--p); }
         .tab i { font-size: 1.2rem; margin-bottom: 2px; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .tab.active i { transform: translateY(-3px); }
 
         /* Lista de registros */
         .item { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 15px 0; 
-            border-bottom: 1px solid #f3f4f6; 
-            cursor: pointer; 
-            transition: background 0.1s;
+             display: flex; 
+             justify-content: space-between; 
+             padding: 15px 0; 
+             border-bottom: 1px solid #f3f4f6; 
+             cursor: pointer; 
+             transition: background 0.1s;
             align-items: center;
         }
         .item:hover { background: #fafafa; }
@@ -197,12 +199,12 @@
 
         /* Gráfico */
         canvas { 
-            transform: translateZ(0); 
-            max-height: 250px; 
-            width: 100% !important; 
-        }
+             transform: translateZ(0); 
+             max-height: 250px; 
+             width: 100% !important; 
+         }
 
-        /* MODAIS GLASS (tutorial, pix, boas vindas) */
+        /* MODAIS GLASS (tutorial, pix, boas vindas, RELATORIOS) */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.35);
@@ -235,57 +237,42 @@
         }
 
         /* Tutorial */
-        .tutorial-list {
-            text-align: left;
-            padding-left: 0;
-            list-style: none;
-            margin: 10px 0;
-        }
-        .tutorial-list h4 {
-            margin: 20px 0 8px;
-            color: var(--p);
-            font-size: 0.95rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 5px;
-        }
-        .tutorial-list ul {
-            padding-left: 20px;
-            margin: 0 0 5px 0;
-            list-style: none;
-        }
-        .tutorial-list li {
-            margin-bottom: 10px;
-            font-size: 0.8rem;
-            color: #4b5563;
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            line-height: 1.4;
-        }
+        .tutorial-list { text-align: left; padding-left: 0; list-style: none; margin: 10px 0; }
+        .tutorial-list h4 { margin: 20px 0 8px; color: var(--p); font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; }
+        .tutorial-list ul { padding-left: 20px; margin: 0 0 5px 0; list-style: none; }
+        .tutorial-list li { margin-bottom: 10px; font-size: 0.8rem; color: #4b5563; display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; }
         .tutorial-list li i { color: var(--p); margin-top: 2px; min-width: 18px; text-align: center; }
 
         /* Backup alert */
-        .backup-alert {
-            background: #eff6ff; border: 1px solid #dbeafe; padding: 12px 16px; border-radius: 12px;
-            margin-bottom: 20px; display: none; align-items: center; justify-content: space-between;
-        }
+        .backup-alert { background: #eff6ff; border: 1px solid #dbeafe; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; display: none; align-items: center; justify-content: space-between; }
 
         /* Info e privacidade */
         .info-section { font-size: 0.85rem; line-height: 1.5; color: #4b5563; }
         .privacy-box { background: #f0fdf4; border: 1px solid #10b981; padding: 15px; border-radius: 15px; margin-top: 15px; color: #065f46; }
 
-        /* Modal de confirmação (herdado do Chuchuzeiro) */
-        #custom-modal .modal-box {
-            background: white; width: 85%; max-width: 320px; padding: 24px; border-radius: 20px; text-align: center;
-            transform: scale(0.9); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        /* Modal de confirmação (Reset) - CORRIGIDO */
+        #custom-modal .modal-box { 
+            background: rgba(255, 255, 255, 0.85); /* Fundo Glass */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.5);
+            width: 85%; 
+            max-width: 320px; 
+            padding: 24px; 
+            border-radius: 20px; 
+            text-align: center; 
+            transform: scale(0.9); 
+            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); 
         }
         #custom-modal.open { display: flex; }
         .modal-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
         .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: #111; }
+        .modal-actions {
+            display: flex;
+            gap: 15px; /* Espaço entre os botões */
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -328,6 +315,27 @@
             </p>
             <input type="text" id="user-name-input" class="glass-input" placeholder="Ex: Sítio Esperança, Sr. João...">
             <button class="btn-primary" onclick="salvarUsuario()">Começar</button>
+        </div>
+    </div>
+
+    <div id="modal-relatorios" class="modal-overlay">
+        <div class="glass-card">
+            <h3 style="color: var(--p); margin-top: 0;"><i class="fas fa-file-invoice"></i> Relatórios</h3>
+            <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 20px;">
+                Escolha o tipo de relatório que deseja exportar em PDF:
+            </p>
+            
+            <button class="btn-primary" onclick="gerarRelatorioPDF()" style="margin-bottom: 12px; background: #374151;">
+                <i class="fas fa-calendar-alt"></i> Relatório Mensal
+            </button>
+
+            <button class="btn-primary" onclick="gerarRelatorioSafraPDF()" style="margin-bottom: 20px; background: var(--p);">
+                <i class="fas fa-layer-group"></i> Relatório Safra Anual
+            </button>
+
+            <button class="btn-sec" onclick="fecharModalRelatorios()">
+                Cancelar
+            </button>
         </div>
     </div>
 
@@ -453,6 +461,10 @@
         <div id="v-consulta" class="view">
             <div class="card">
                 <h3><i class="fas fa-chart-line" style="color: var(--p);"></i> Desempenho</h3>
+                <div id="info-safra-anual" style="font-size: 0.75rem; color: #666; margin-top: -10px; margin-bottom: 10px;">
+                    Lucro Acumulado (Ano): <strong style="color: var(--p)">R$ 0,00</strong>
+                </div>
+
                 <select id="filtroMes" onchange="render()"></select>
                 
                 <div style="height:200px; width:100%; margin-top:10px;">
@@ -473,8 +485,11 @@
                     </div>
                     <button style="width: auto; padding: 8px 16px; font-size: 0.75rem; background: #2563eb; color: white;" onclick="exportarManual()"><i class="fas fa-download"></i> BAIXAR</button>
                 </div>
-
-                <button class="btn-pdf" onclick="gerarRelatorioPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF Completo</button>
+                
+                <button class="btn-primary" onclick="abrirModalRelatorios()" style="background-color: #0d9488;">
+                    <i class="fas fa-file-invoice"></i> Opções de Relatórios
+                </button>
+                
                 <button class="btn-wpp" onclick="compartilharWhatsapp()"><i class="fab fa-whatsapp"></i> Enviar no WhatsApp</button>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -534,6 +549,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     <nav>
@@ -621,6 +637,14 @@
         function openPixModal() { document.getElementById('pix-modal').style.display = 'flex'; }
         function closePixModal() { document.getElementById('pix-modal').style.display = 'none'; }
 
+        // --- NOVAS FUNÇÕES MODAL RELATORIOS ---
+        function abrirModalRelatorios() {
+            document.getElementById('modal-relatorios').style.display = 'flex';
+        }
+        function fecharModalRelatorios() {
+            document.getElementById('modal-relatorios').style.display = 'none';
+        }
+
         // -------------------- TOAST --------------------
         function showToast(msg, type = 'success') {
             const t = document.getElementById("toast");
@@ -658,8 +682,8 @@
                 if(!db.objectStoreNames.contains("gastos")) db.createObjectStore("gastos", { keyPath: "id", autoIncrement: true });
             };
             request.onsuccess = e => { 
-                db = e.target.result; 
-                popularFiltroMeses();
+                 db = e.target.result; 
+                 popularFiltroMeses();
                 render();
                 verificarBackupSemanal();
             };
@@ -809,6 +833,18 @@
             document.getElementById('dash-in').innerText = FORMAT_BRL.format(tV);
             document.getElementById('dash-out').innerText = FORMAT_BRL.format(tG);
 
+            // CALCULO ANUAL DISCRETO
+            const anoAtual = new Date().getFullYear().toString();
+            const totalVendaAno = allV.reduce((acc, i) => i.dt.startsWith(anoAtual) ? acc + i.t : acc, 0);
+            const totalGastoAno = allG.reduce((acc, i) => i.dt.startsWith(anoAtual) ? acc + i.v : acc, 0);
+            const lucroAno = totalVendaAno - totalGastoAno;
+            
+            const elLucroAno = document.querySelector('#info-safra-anual strong');
+            if(elLucroAno) {
+                elLucroAno.innerText = FORMAT_BRL.format(lucroAno);
+                elLucroAno.style.color = lucroAno >= 0 ? 'var(--p)' : 'var(--expense)';
+            }
+
             // Lista
             const lista = document.getElementById('lista-detalhada');
             lista.innerHTML = '';
@@ -946,9 +982,10 @@
             }
         }
 
-        // -------------------- PDF PROFISSIONAL (adaptado do modelo) --------------------
+        // -------------------- PDF MENSAL (já existente) --------------------
         async function gerarRelatorioPDF() {
-            showToast("Gerando PDF...");
+            fecharModalRelatorios();
+            showToast("Gerando PDF Mensal...");
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
@@ -1010,6 +1047,114 @@
             }
             doc.save(`Chuchuzeiro_${getSafeFileName()}_${filtro}.pdf`);
             showToast("PDF salvo!");
+        }
+
+        // -------------------- PDF SAFRA ANUAL (CORRIGIDO) --------------------
+        async function gerarRelatorioSafraPDF() {
+            fecharModalRelatorios();
+            showToast("Gerando PDF Safra...");
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const anoAtual = new Date().getFullYear();
+            const allV = await getAll("vendas");
+            const allG = await getAll("gastos");
+            
+            // Dados agregados por mês
+            const mesesDados = Array(12).fill(null).map(() => ({ q: 0, v: 0, g: 0 }));
+            
+            allV.forEach(v => {
+                if (v.dt.startsWith(anoAtual)) {
+                    const m = parseInt(v.dt.split('-')[1]) - 1;
+                    mesesDados[m].q += v.q;
+                    mesesDados[m].v += v.t;
+                }
+            });
+            allG.forEach(g => {
+                if (g.dt.startsWith(anoAtual)) {
+                    const m = parseInt(g.dt.split('-')[1]) - 1;
+                    mesesDados[m].g += g.v;
+                }
+            });
+
+            // Achar melhor mês de produção
+            let maxQ = 0;
+            mesesDados.forEach(m => { if(m.q > maxQ) maxQ = m.q; });
+
+            // Cabeçalho
+            doc.setFillColor(27, 94, 32); 
+            doc.rect(0, 0, doc.internal.pageSize.getWidth(), 45, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.setFont("helvetica", 'bold');
+            doc.text("SAFRA ANUAL", doc.internal.pageSize.getWidth()/2, 20, { align: 'center' });
+            doc.setFontSize(12);
+            doc.setFont("helvetica", 'normal');
+            doc.text(`${removerAcentos(getUserName())} • Ano: ${anoAtual}`, doc.internal.pageSize.getWidth()/2, 35, { align: 'center' });
+
+            const tableBody = [];
+            const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            
+            let totalAnoQ = 0;
+            let totalAnoLucro = 0;
+            let bestMonthIndex = -1; // Para pintar a linha
+
+            mesesDados.forEach((d, i) => {
+                const lucro = d.v - d.g;
+                totalAnoQ += d.q;
+                totalAnoLucro += lucro;
+                
+                let mesNome = nomesMeses[i];
+                // Removemos o emoji aqui para corrigir o erro de texto, usamos texto puro
+                if (d.q > 0 && d.q === maxQ) {
+                    mesNome += " (Melhor Safra)";
+                    bestMonthIndex = i;
+                }
+
+                tableBody.push([
+                    mesNome,
+                    d.q + " cx",
+                    FORMAT_BRL.format(d.v),
+                    FORMAT_BRL.format(d.g),
+                    FORMAT_BRL.format(lucro)
+                ]);
+            });
+
+            // Linha de Total
+            tableBody.push([
+                "TOTAL ANUAL", 
+                totalAnoQ + " cx", 
+                "-", 
+                "-", 
+                FORMAT_BRL.format(totalAnoLucro)
+            ]);
+
+            doc.autoTable({
+                startY: 55,
+                head: [['Mês', 'Produção', 'Receita', 'Despesa', 'Lucro']],
+                body: tableBody,
+                theme: 'striped',
+                headStyles: { fillColor: [27, 94, 32], textColor: 255, fontStyle: 'bold' },
+                columnStyles: { 
+                    0: { fontStyle: 'bold' },
+                    4: { halign: 'right', fontStyle: 'bold' } 
+                },
+                didParseCell: function(data) {
+                    // Pintar linha de total em cinza
+                    if (data.row.index === tableBody.length - 1) {
+                        data.cell.styles.fillColor = [220, 220, 220];
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                    // Pintar linha da MELHOR SAFRA em dourado suave para destacar sem emoji
+                    if (bestMonthIndex !== -1 && data.row.index === bestMonthIndex) {
+                        data.cell.styles.fillColor = [255, 248, 220]; // Dourado bem claro
+                        data.cell.styles.textColor = [180, 83, 9]; // Marrom dourado escuro
+                    }
+                }
+            });
+
+            doc.save(`Chuchuzeiro_Safra_${anoAtual}.pdf`);
+            showToast("PDF Safra salvo!");
         }
 
         // -------------------- COMPARTILHAR WHATSAPP --------------------
@@ -1082,10 +1227,10 @@
             tx.objectStore("vendas").clear();
             tx.objectStore("gastos").clear();
             tx.oncomplete = () => { 
-                localStorage.removeItem(AUTO_BACKUP_KEY); 
-                showToast("Tudo limpo!"); 
-                render(); 
-            };
+                 localStorage.removeItem(AUTO_BACKUP_KEY); 
+                 showToast("Tudo limpo!"); 
+                 render(); 
+             };
         }
 
         // -------------------- NAVEGAÇÃO ENTRE ABAS --------------------
