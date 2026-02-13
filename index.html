@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -34,10 +33,23 @@
         body {
             background: var(--bg);
             margin: 0;
-            padding-bottom: 110px;
+            padding-bottom: 110px; /* Espaço original para o menu */
             color: #111;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
+            transition: padding-bottom 0.3s;
+        }
+
+        /* CLASSE AUXILIAR PARA QUANDO O TECLADO ABRE */
+        body.keyboard-open {
+            padding-bottom: 20px !important; /* Remove o espaço extra do menu */
+        }
+        
+        /* Esconde o menu quando a classe keyboard-open está no body */
+        body.keyboard-open nav {
+            transform: translateY(150%); /* Move para baixo da tela */
+            opacity: 0;
+            pointer-events: none;
         }
 
         .gpu-accelerated {
@@ -108,35 +120,35 @@
         .card:active { transform: scale(0.99) translateZ(0); }
 
         input, select { 
-             width: 100%; 
-             padding: 14px; 
-             border-radius: 12px; 
-             border: 1px solid #e5e7eb; 
-             background: #f9fafb; 
-             margin-bottom: 15px; 
-             font-size: 16px; 
-             transition: all 0.2s;
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 12px; 
+            border: 1px solid #e5e7eb; 
+            background: #f9fafb; 
+            margin-bottom: 15px; 
+            font-size: 16px; 
+            transition: all 0.2s;
         }
         input:focus, select:focus { 
-             border-color: var(--p); 
-             box-shadow: 0 0 0 3px rgba(27,94,32,0.1); 
-             outline: none; 
-             background: white;
+            border-color: var(--p); 
+            box-shadow: 0 0 0 3px rgba(27,94,32,0.1); 
+            outline: none; 
+            background: white;
         }
 
         button { 
-             width: 100%; 
-             padding: 15px; 
-             border-radius: 12px; 
-             border: none; 
-             font-weight: 700; 
-             cursor: pointer; 
-             display: flex; 
-             align-items: center; 
-             justify-content: center; 
-             gap: 8px; 
-             transition: all 0.2s; 
-         }
+            width: 100%; 
+            padding: 15px; 
+            border-radius: 12px; 
+            border: none; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            transition: all 0.2s; 
+        }
         button:active { transform: scale(0.98); opacity: 0.9; }
 
         .btn-income { background: var(--income); color: white; }
@@ -149,34 +161,34 @@
         .btn-wpp { background: #25d366; color: white; }
         .btn-tutorial { background: #8b5cf6; color: white; }
         .btn-pdf { background: #374151; color: white; }
+        .btn-pdf-year { background: #1e3a5f; color: white; }
         .btn-update { background: #f59e0b; color: white; }
 
-        /* Navegação inferior flutuante - GLASS AJUSTADO */
+        /* Navegação inferior flutuante */
         nav {
             position: fixed; bottom: 20px; left: 16px; right: 16px;
-            background: rgba(255, 255, 255, 0.70); /* Mais transparente */
-            backdrop-filter: blur(15px); /* Mais blur */
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             z-index: 100;
-            transform: translateZ(0);
+            transform: translateZ(0) translateY(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
         }
         .nav-buttons { display: flex; height: 70px; justify-content: space-around; align-items: center; }
-        .tab { color: #6b7280; font-size: 0.65rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; transition: color 0.2s; }
+        .tab { color: #9ca3af; font-size: 0.65rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; transition: color 0.2s; }
         .tab.active { color: var(--p); }
         .tab i { font-size: 1.2rem; margin-bottom: 2px; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .tab.active i { transform: translateY(-3px); }
 
         /* Lista de registros */
         .item { 
-             display: flex; 
-             justify-content: space-between; 
-             padding: 15px 0; 
-             border-bottom: 1px solid #f3f4f6; 
-             cursor: pointer; 
-             transition: background 0.1s;
+            display: flex; 
+            justify-content: space-between; 
+            padding: 15px 0; 
+            border-bottom: 1px solid #f3f4f6; 
+            cursor: pointer; 
+            transition: background 0.1s;
             align-items: center;
         }
         .item:hover { background: #fafafa; }
@@ -199,12 +211,12 @@
 
         /* Gráfico */
         canvas { 
-             transform: translateZ(0); 
-             max-height: 250px; 
-             width: 100% !important; 
-         }
+            transform: translateZ(0); 
+            max-height: 250px; 
+            width: 100% !important; 
+        }
 
-        /* MODAIS GLASS (tutorial, pix, boas vindas, RELATORIOS) */
+        /* MODAIS GLASS */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.35);
@@ -237,41 +249,149 @@
         }
 
         /* Tutorial */
-        .tutorial-list { text-align: left; padding-left: 0; list-style: none; margin: 10px 0; }
-        .tutorial-list h4 { margin: 20px 0 8px; color: var(--p); font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; }
-        .tutorial-list ul { padding-left: 20px; margin: 0 0 5px 0; list-style: none; }
-        .tutorial-list li { margin-bottom: 10px; font-size: 0.8rem; color: #4b5563; display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; }
+        .tutorial-list {
+            text-align: left;
+            padding-left: 0;
+            list-style: none;
+            margin: 10px 0;
+        }
+        .tutorial-list h4 {
+            margin: 20px 0 8px;
+            color: var(--p);
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+        .tutorial-list ul {
+            padding-left: 20px;
+            margin: 0 0 5px 0;
+            list-style: none;
+        }
+        .tutorial-list li {
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            color: #4b5563;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            line-height: 1.4;
+        }
         .tutorial-list li i { color: var(--p); margin-top: 2px; min-width: 18px; text-align: center; }
 
         /* Backup alert */
-        .backup-alert { background: #eff6ff; border: 1px solid #dbeafe; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; display: none; align-items: center; justify-content: space-between; }
+        .backup-alert {
+            background: #eff6ff; border: 1px solid #dbeafe; padding: 12px 16px; border-radius: 12px;
+            margin-bottom: 20px; display: none; align-items: center; justify-content: space-between;
+        }
 
         /* Info e privacidade */
         .info-section { font-size: 0.85rem; line-height: 1.5; color: #4b5563; }
         .privacy-box { background: #f0fdf4; border: 1px solid #10b981; padding: 15px; border-radius: 15px; margin-top: 15px; color: #065f46; }
 
-        /* Modal de confirmação (Reset) - CORRIGIDO */
-        #custom-modal .modal-box { 
-            background: rgba(255, 255, 255, 0.85); /* Fundo Glass */
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.5);
-            width: 85%; 
-            max-width: 320px; 
-            padding: 24px; 
-            border-radius: 20px; 
-            text-align: center; 
-            transform: scale(0.9); 
-            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); 
+        /* Modal de confirmação */
+        #custom-modal .modal-box {
+            background: white; width: 85%; max-width: 320px; padding: 24px; border-radius: 20px; text-align: center;
+            transform: scale(0.9); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
         }
         #custom-modal.open { display: flex; }
         .modal-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
         .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: #111; }
-        .modal-actions {
-            display: flex;
-            gap: 15px; /* Espaço entre os botões */
+
+        /* Grid para botões de PDF */
+        .pdf-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Estilos para os níveis de apoio (tiers) */
+        .tiers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
             margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        .tier-card {
+            background: white;
+            border-radius: 16px;
+            padding: 18px 14px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+            transition: transform 0.15s;
+            border: 1px solid #f0f0f0;
+            position: relative;
+        }
+        .tier-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(27,94,32,0.08);
+        }
+        .tier-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        .tier-title {
+            font-weight: 800;
+            color: var(--p);
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+        .tier-price {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        .tier-description {
+            font-size: 0.75rem;
+            color: #4b5563;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .tier-qr {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+            background: #f9fafb;
+            padding: 5px;
+            cursor: zoom-in;
+        }
+        .zoom-hint {
+            font-size: 0.75rem;
+            color: var(--p);
+            margin-top: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: transform 0.2s;
+        }
+        .zoom-hint:active { transform: scale(0.95); }
+
+        .badge-popular {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--p);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(27,94,32,0.3);
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -315,27 +435,6 @@
             </p>
             <input type="text" id="user-name-input" class="glass-input" placeholder="Ex: Sítio Esperança, Sr. João...">
             <button class="btn-primary" onclick="salvarUsuario()">Começar</button>
-        </div>
-    </div>
-
-    <div id="modal-relatorios" class="modal-overlay">
-        <div class="glass-card">
-            <h3 style="color: var(--p); margin-top: 0;"><i class="fas fa-file-invoice"></i> Relatórios</h3>
-            <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 20px;">
-                Escolha o tipo de relatório que deseja exportar em PDF:
-            </p>
-            
-            <button class="btn-primary" onclick="gerarRelatorioPDF()" style="margin-bottom: 12px; background: #374151;">
-                <i class="fas fa-calendar-alt"></i> Relatório Mensal
-            </button>
-
-            <button class="btn-primary" onclick="gerarRelatorioSafraPDF()" style="margin-bottom: 20px; background: var(--p);">
-                <i class="fas fa-layer-group"></i> Relatório Safra Anual
-            </button>
-
-            <button class="btn-sec" onclick="fecharModalRelatorios()">
-                Cancelar
-            </button>
         </div>
     </div>
 
@@ -402,15 +501,14 @@
         </div>
     </div>
 
-    <div id="pix-modal" class="modal-overlay">
-        <div class="glass-card">
-            <h3 style="color: var(--p); margin-top: 0;">Mantenha o projeto vivo ☕</h3>
+    <div id="pix-modal" class="modal-overlay" onclick="closePixModal()">
+        <div class="glass-card" onclick="event.stopPropagation()">
+            <h3 id="modal-qr-title" style="color: var(--p); margin-top: 0;">Mantenha o projeto vivo ☕</h3>
             <div style="background: white; padding: 15px; border-radius: 15px; display: inline-block; margin: 10px 0;">
-                <img src="qrcode.png" alt="QR Code PIX" style="width: 200px; height: 200px; object-fit: contain; display: block;" onerror="this.src='https://placehold.co/200x200?text=QR+Code+PIX'">
+                <img id="modal-qr-img" src="" alt="QR Code Ampliado" style="width: 250px; height: 250px; object-fit: contain; display: block;">
             </div>
             <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 20px; line-height: 1.5;">
-                Sua doação mantém o Chuchuzeiro gratuito e sem anúncios.<br>
-                <b>Escaneie e faça um PIX</b>
+                Escaneie o código acima usando o aplicativo do seu banco para apoiar o <b>Chuchuzeiro</b>.
             </p>
             <button class="btn-primary" onclick="closePixModal()" style="background: #374151;">
                 <i class="fas fa-times"></i> Fechar
@@ -461,12 +559,30 @@
         <div id="v-consulta" class="view">
             <div class="card">
                 <h3><i class="fas fa-chart-line" style="color: var(--p);"></i> Desempenho</h3>
-                <div id="info-safra-anual" style="font-size: 0.75rem; color: #666; margin-top: -10px; margin-bottom: 10px;">
-                    Lucro Acumulado (Ano): <strong style="color: var(--p)">R$ 0,00</strong>
-                </div>
-
                 <select id="filtroMes" onchange="render()"></select>
-                
+
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 15px; margin-top: 15px;">
+                    <h4 style="margin: 0 0 10px; color: var(--p-dark); font-size: 0.9rem; display: flex; justify-content: space-between;">
+                        <span><i class="fas fa-calendar-alt"></i> Safra <span id="lbl-ano-safra">----</span></span>
+                        <small style="font-weight: normal; opacity: 0.8">Jan a Dez</small>
+                    </h4>
+                    
+                    <div style="display: flex; justify-content: space-between; text-align: center;">
+                        <div>
+                            <small style="color: #666; font-size: 0.7rem;">RECEITA ANUAL</small>
+                            <div id="safra-total-venda" style="color: var(--income); font-weight: 800; font-size: 0.9rem;">R$ 0,00</div>
+                        </div>
+                        <div>
+                            <small style="color: #666; font-size: 0.7rem;">CUSTO ANUAL</small>
+                            <div id="safra-total-gasto" style="color: var(--expense); font-weight: 800; font-size: 0.9rem;">R$ 0,00</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #dcfce7; text-align: center;">
+                         <small style="color: #666; font-size: 0.7rem; text-transform: uppercase;">Resultado da Safra</small>
+                         <div id="safra-saldo-final" style="font-size: 1.3rem; font-weight: 900;">R$ 0,00</div>
+                    </div>
+                </div>
                 <div style="height:200px; width:100%; margin-top:10px;">
                     <canvas id="graficoLinha"></canvas>
                 </div>
@@ -485,11 +601,12 @@
                     </div>
                     <button style="width: auto; padding: 8px 16px; font-size: 0.75rem; background: #2563eb; color: white;" onclick="exportarManual()"><i class="fas fa-download"></i> BAIXAR</button>
                 </div>
-                
-                <button class="btn-primary" onclick="abrirModalRelatorios()" style="background-color: #0d9488;">
-                    <i class="fas fa-file-invoice"></i> Opções de Relatórios
-                </button>
-                
+
+                <div class="pdf-buttons">
+                    <button class="btn-pdf" onclick="gerarPDF('mes')"><i class="fas fa-file-pdf"></i> PDF (Mês)</button>
+                    <button class="btn-pdf-year" onclick="gerarPDF('ano')"><i class="fas fa-layer-group"></i> PDF (Safra)</button>
+                </div>
+
                 <button class="btn-wpp" onclick="compartilharWhatsapp()"><i class="fab fa-whatsapp"></i> Enviar no WhatsApp</button>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -506,33 +623,71 @@
 
         <div id="v-apoie" class="view">
             <div class="card">
-                <h3><i class="fas fa-hand-holding-heart" style="color: #e11d48;"></i> Por que apoiar?</h3>
+                <h3><i class="fas fa-hand-holding-heart" style="color: #e11d48;"></i> O Chuchuzeiro ajudou sua safra?</h3>
                 
                 <div class="info-section">
-                    <p>O <b>Chuchuzeiro</b> não é apenas um controle de colheitas. É um software ético, feito para o produtor rural que valoriza <b>privacidade, simplicidade e liberdade</b>.</p>
+                    <p>O <b>Chuchuzeiro</b> foi criado para colocar o controle financeiro da sua roça na palma da mão, garantindo que <b>nenhum centavo do seu suor passe despercebido</b>.</p>
                     
-                    <h4><i class="fas fa-user-shield"></i> Privacidade Radical</h4>
-                    <p>A maioria dos apps envia seus dados financeiros para a nuvem. Aqui, usamos <b>IndexedDB</b> (banco de dados local). <b>Nenhuma informação sai do seu celular</b>. Nem mesmo nós temos acesso.</p>
+                    <h4><i class="fas fa-chart-line"></i> O Fim do Caderno (Lucro Real)</h4>
+                    <p>Chega de contas de cabeça ou anotações perdidas. Saiba exatamente quantas caixas saíram, qual é a sua <b>margem de lucro real</b> e não deixe dinheiro na mesa.</p>
 
-                    <h4><i class="fas fa-tachometer-alt"></i> Performance Extrema</h4>
-                    <p>Todo o app roda com aceleração de hardware (GPU). As telas são fluidas e a bateria dura mais – essencial para quem trabalha no campo.</p>
+                    <h4><i class="fas fa-wifi-slash"></i> 100% Offline (Feito para o Campo)</h4>
+                    <p>Tá no meio da roça ou na estrada sem sinal? Sem problema. O app funciona perfeitamente sem internet e é super leve para <b>economizar a bateria do seu celular</b> o dia todo.</p>
 
-                    <h4><i class="fas fa-wifi-slash"></i> Soberania Digital (Offline)</h4>
-                    <p>Sem internet? Sem problema. O Chuchuzeiro funciona no modo avião, na roça ou no transporte da colheita. Seus backups (JSON) são seus – você decide onde guardar.</p>
+                    <h4><i class="fas fa-user-shield"></i> Ninguém Espiona Suas Contas</h4>
+                    <p>Diferente de grandes empresas, <b>nós não temos acesso aos seus dados</b>. Tudo fica trancado e seguro apenas no seu aparelho. O dinheiro é seu, a informação também.</p>
                     
                     <div class="privacy-box" style="background: #fff1f2; border-color: #e11d48; color: #9f1239;">
-                        <p><i class="fas fa-mug-hot"></i> <b>100% gratuito e sem anúncios</b><br>
-                        Este projeto é mantido com doações de usuários como você. Desenvolver tecnologia agrícola de qualidade exige centenas de horas. Se o Chuchuzeiro ajuda sua gestão, considere apoiar.</p>
+                        <p><i class="fas fa-ban"></i> <b>Zero Mensalidades. Zero Anúncios.</b><br>
+                        Outros aplicativos agrícolas chegam a cobrar centenas de reais por ano. O Chuchuzeiro é <b>gratuito</b>. Se o app já fez você economizar tempo, organizar a colheita ou não perder dinheiro, considere retribuir!</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
+                    <h4 style="color: var(--p); margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-gift"></i> Escolha como apoiar o projeto
+                    </h4>
+                    <div class="tiers-grid">
+                        
+                        <div class="tier-card">
+                            <div class="tier-icon">☕</div>
+                            <div class="tier-title">O "Cafézinho"</div>
+                            <div class="tier-price">R$ 5,00 a R$ 10,00</div>
+                            <div class="tier-description">
+                                Valor simbólico e rápido! Se o app te ajudou hoje, esse apoio paga o café do desenvolvedor e dá aquele empurrão de motivação para criar novas melhorias.
+                            </div>
+                            <img src="qrcode.png" alt="QR Code PIX - Cafézinho" class="tier-qr" onclick="abrirQrCodeZoom(this.src, 'O Cafézinho ☕')" onerror="this.src='https://placehold.co/200x200?text=QR+Code+PIX'">
+                            <div class="zoom-hint" onclick="abrirQrCodeZoom(this.previousElementSibling.src, 'O Cafézinho ☕')"><i class="fas fa-search-plus"></i> Clique para ampliar</div>
+                        </div>
+
+                        <div class="tier-card" style="background: #f0fdf4; border-color: #bbf7d0;">
+                            <div class="badge-popular">✨ Mais Escolhido</div>
+                            <div class="tier-icon">🚜</div>
+                            <div class="tier-title">O Valor Justo</div>
+                            <div class="tier-price">R$ 15,00 a R$ 25,00</div>
+                            <div class="tier-description">
+                                O preço de <b>uma única mensalidade</b> de outros apps, mas pago uma vez só! Retribua pelas horas economizadas e pelos relatórios profissionais gerados para você.
+                            </div>
+                            <img src="qrcode.png" alt="QR Code PIX - Assinatura" class="tier-qr" onclick="abrirQrCodeZoom(this.src, 'O Valor Justo 🚜')" onerror="this.src='https://placehold.co/200x200?text=QR+Code+PIX'">
+                            <div class="zoom-hint" onclick="abrirQrCodeZoom(this.previousElementSibling.src, 'O Valor Justo 🚜')"><i class="fas fa-search-plus"></i> Clique para ampliar</div>
+                        </div>
+
+                        <div class="tier-card" style="background: #fef9e7; border-color: #fde68a;">
+                            <div class="tier-icon">🏆</div>
+                            <div class="tier-title">Sócio Produtor</div>
+                            <div class="tier-price">R$ 50,00 ou mais</div>
+                            <div class="tier-description">
+                                O app virou a ferramenta central do seu negócio? Apoie como um verdadeiro "sócio". Seu apoio garante que o aplicativo continue existindo, sem taxas ocultas e focado no pequeno produtor.
+                            </div>
+                            <img src="qrcode.png" alt="QR Code PIX - Apoiador Pro" class="tier-qr" onclick="abrirQrCodeZoom(this.src, 'Sócio Produtor 🏆')" onerror="this.src='https://placehold.co/200x200?text=QR+Code+PIX'">
+                            <div class="zoom-hint" onclick="abrirQrCodeZoom(this.previousElementSibling.src, 'Sócio Produtor 🏆')"><i class="fas fa-search-plus"></i> Clique para ampliar</div>
+                        </div>
                     </div>
                 </div>
         
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
                     <button class="btn-tutorial" onclick="openTutorialModal()">
                         <i class="fas fa-book-reader"></i> Tutorial: Conheça todos os recursos
-                    </button>
-
-                    <button class="btn-pix" onclick="openPixModal()">
-                        <i class="fas fa-qrcode"></i> Apoiar via PIX (QR Code)
                     </button>
 
                     <button class="btn-mp" onclick="window.open('https://link.mercadopago.com.br/cuecasa', '_blank')">
@@ -545,11 +700,10 @@
                 
                 <div style="text-align: center; margin-top: 20px; color: #9ca3af; font-size: 0.7rem;">
                     Versão 2.0 • Feito com 🌱 para agricultura familiar<br>
-                    <i class="fas fa-shield-alt"></i> Dados 100% no seu dispositivo
+                    <i class="fas fa-shield-alt"></i> Dados 100% seguros no seu aparelho
                 </div>
             </div>
         </div>
-
     </div>
 
     <nav>
@@ -597,6 +751,28 @@
         const AUTO_BACKUP_KEY = "chuchu_auto_mirror";
         let pendingAction = null;
 
+        // -------------------- DETECÇÃO DE TECLADO (UX/UI FIX) --------------------
+        function setupKeyboardHelpers() {
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', (e) => {
+                    document.body.classList.add('keyboard-open');
+                    setTimeout(() => {
+                        e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                });
+                input.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        const active = document.activeElement;
+                        const isInput = active.tagName === 'INPUT' || active.tagName === 'SELECT' || active.tagName === 'TEXTAREA';
+                        if (!isInput) {
+                            document.body.classList.remove('keyboard-open');
+                        }
+                    }, 100);
+                });
+            });
+        }
+
         // -------------------- UTILITÁRIOS --------------------
         function removerAcentos(str) {
             if (!str) return "";
@@ -634,16 +810,14 @@
 
         function openTutorialModal() { document.getElementById('tutorial-modal').style.display = 'flex'; }
         function closeTutorialModal() { document.getElementById('tutorial-modal').style.display = 'none'; }
-        function openPixModal() { document.getElementById('pix-modal').style.display = 'flex'; }
+        
+        // FUNÇÕES DO NOVO MODAL DE QR CODE
+        function abrirQrCodeZoom(imageSrc, titulo) {
+            document.getElementById('modal-qr-img').src = imageSrc;
+            document.getElementById('modal-qr-title').innerText = titulo;
+            document.getElementById('pix-modal').style.display = 'flex';
+        }
         function closePixModal() { document.getElementById('pix-modal').style.display = 'none'; }
-
-        // --- NOVAS FUNÇÕES MODAL RELATORIOS ---
-        function abrirModalRelatorios() {
-            document.getElementById('modal-relatorios').style.display = 'flex';
-        }
-        function fecharModalRelatorios() {
-            document.getElementById('modal-relatorios').style.display = 'none';
-        }
 
         // -------------------- TOAST --------------------
         function showToast(msg, type = 'success') {
@@ -673,7 +847,7 @@
             closeModal();
         };
 
-        // -------------------- INDEXED DB (igual ao original) --------------------
+        // -------------------- INDEXED DB --------------------
         function initDB() {
             const request = indexedDB.open(DB_NAME, DB_VERSION);
             request.onupgradeneeded = e => {
@@ -682,8 +856,8 @@
                 if(!db.objectStoreNames.contains("gastos")) db.createObjectStore("gastos", { keyPath: "id", autoIncrement: true });
             };
             request.onsuccess = e => { 
-                 db = e.target.result; 
-                 popularFiltroMeses();
+                db = e.target.result; 
+                popularFiltroMeses();
                 render();
                 verificarBackupSemanal();
             };
@@ -809,13 +983,17 @@
             };
         }
 
-        // -------------------- RENDERIZAÇÃO (igual original, adaptada para novos cards) --------------------
+        // -------------------- RENDERIZAÇÃO --------------------
         async function render() {
             if (!db) return;
             if (document.getElementById('filtroMes').options.length === 0) await popularFiltroMeses();
-            const filtro = document.getElementById('filtroMes').value;
+            
+            const filtro = document.getElementById('filtroMes').value; // YYYY-MM
+            const anoAtual = filtro.split('-')[0];
+
             const allV = await getAll("vendas");
             const allG = await getAll("gastos");
+
             const v = allV.filter(i => i.dt.startsWith(filtro));
             const g = allG.filter(i => i.dt.startsWith(filtro));
 
@@ -833,17 +1011,21 @@
             document.getElementById('dash-in').innerText = FORMAT_BRL.format(tV);
             document.getElementById('dash-out').innerText = FORMAT_BRL.format(tG);
 
-            // CALCULO ANUAL DISCRETO
-            const anoAtual = new Date().getFullYear().toString();
-            const totalVendaAno = allV.reduce((acc, i) => i.dt.startsWith(anoAtual) ? acc + i.t : acc, 0);
-            const totalGastoAno = allG.reduce((acc, i) => i.dt.startsWith(anoAtual) ? acc + i.v : acc, 0);
-            const lucroAno = totalVendaAno - totalGastoAno;
+            // SAFRA
+            const vSafra = allV.filter(i => i.dt.startsWith(anoAtual));
+            const gSafra = allG.filter(i => i.dt.startsWith(anoAtual));
+
+            const totalVSafra = vSafra.reduce((sum, i) => sum + i.t, 0);
+            const totalGSafra = gSafra.reduce((sum, i) => sum + i.v, 0);
+            const saldoSafra = totalVSafra - totalGSafra;
+
+            document.getElementById('lbl-ano-safra').innerText = anoAtual;
+            document.getElementById('safra-total-venda').innerText = FORMAT_BRL.format(totalVSafra);
+            document.getElementById('safra-total-gasto').innerText = FORMAT_BRL.format(totalGSafra);
             
-            const elLucroAno = document.querySelector('#info-safra-anual strong');
-            if(elLucroAno) {
-                elLucroAno.innerText = FORMAT_BRL.format(lucroAno);
-                elLucroAno.style.color = lucroAno >= 0 ? 'var(--p)' : 'var(--expense)';
-            }
+            const elSaldoSafra = document.getElementById('safra-saldo-final');
+            elSaldoSafra.innerText = FORMAT_BRL.format(saldoSafra);
+            elSaldoSafra.style.color = saldoSafra >= 0 ? '#1b5e20' : '#c62828';
 
             // Lista
             const lista = document.getElementById('lista-detalhada');
@@ -889,10 +1071,8 @@
                     </div>
                 </div>
             `;
-            
             div.querySelector('.edit').onclick = (e) => { e.stopPropagation(); editarItem(item.type, item.id); };
             div.querySelector('.del').onclick = (e) => { e.stopPropagation(); confirmAction("Apagar Item", "Deseja remover este registro?", () => apagarItem(item.type, item.id), '🗑️', '#ef4444'); };
-            
             return div;
         }
 
@@ -972,8 +1152,6 @@
 
         function verificarBackupSemanal() {
             const lastBackup = localStorage.getItem(BACKUP_KEY);
-            const elLabel = document.getElementById('lbl-last-backup'); // não usado, mas mantém
-            
             if (lastBackup) {
                 const diffDays = Math.ceil(Math.abs(new Date() - new Date(lastBackup)) / (86400000)); 
                 if (diffDays >= 7) document.getElementById('backup-alert').style.display = 'flex';
@@ -982,21 +1160,33 @@
             }
         }
 
-        // -------------------- PDF MENSAL (já existente) --------------------
-        async function gerarRelatorioPDF() {
-            fecharModalRelatorios();
-            showToast("Gerando PDF Mensal...");
+        // -------------------- PDF PROFISSIONAL (MÊS OU SAFRA) --------------------
+        async function gerarPDF(tipo) {
+            showToast("Gerando PDF...");
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            const filtro = document.getElementById('filtroMes').value;
-            const [ano, mes] = filtro.split('-');
-            const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+            const filtroRaw = document.getElementById('filtroMes').value; // ex: 2026-03
+            const [anoF, mesF] = filtroRaw.split('-');
+            
+            let filtroFinal;
+            let tituloRelatorio;
+
+            if(tipo === 'ano') {
+                filtroFinal = anoF; // Filtra tudo que começa com o Ano
+                tituloRelatorio = `SAFRA COMPLETA • ${anoF}`;
+            } else {
+                filtroFinal = filtroRaw; // Filtra tudo que começa com Ano-Mes
+                const nomeMes = new Date(anoF, mesF - 1).toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+                tituloRelatorio = `${nomeMes}/${anoF}`;
+            }
             
             const allV = await getAll("vendas");
             const allG = await getAll("gastos");
-            const v = allV.filter(i => i.dt.startsWith(filtro));
-            const g = allG.filter(i => i.dt.startsWith(filtro));
+            
+            const v = allV.filter(i => i.dt.startsWith(filtroFinal));
+            const g = allG.filter(i => i.dt.startsWith(filtroFinal));
+            
             const totalV = v.reduce((s, i) => s + i.t, 0);
             const totalG = g.reduce((s, i) => s + i.v, 0);
             const saldo = totalV - totalG;
@@ -1011,7 +1201,7 @@
             doc.text("CHUCHUZEIRO", doc.internal.pageSize.getWidth()/2, 20, { align: 'center' });
             doc.setFontSize(12);
             doc.setFont("helvetica", 'normal');
-            doc.text(`${removerAcentos(getUserName())} • ${nomeMes}/${ano}`, doc.internal.pageSize.getWidth()/2, 35, { align: 'center' });
+            doc.text(`${removerAcentos(getUserName())} • ${tituloRelatorio}`, doc.internal.pageSize.getWidth()/2, 35, { align: 'center' });
             
             let yPos = 55;
             doc.setFillColor(232, 245, 233); doc.rect(14, yPos, 55, 25, 'F');
@@ -1023,21 +1213,52 @@
             doc.setFontSize(12); doc.text(FORMAT_BRL.format(totalG), 81, yPos+18);
             
             doc.setFillColor(243, 244, 246); doc.rect(140, yPos, 55, 25, 'F');
-            doc.setTextColor(31, 41, 55); doc.setFontSize(10); doc.text("SALDO FINAL", 144, yPos+8);
+            doc.setTextColor(31, 41, 55); doc.setFontSize(10); doc.text("SALDO LÍQUIDO", 144, yPos+8);
             doc.setFontSize(12); doc.text(FORMAT_BRL.format(saldo), 144, yPos+18);
 
             doc.setTextColor(100); doc.setFontSize(9);
-            doc.text(`Total de Caixas: ${totalCx}`, 14, yPos + 35);
-            doc.text(`Margem de Lucro: ${totalV > 0 ? ((saldo/totalV)*100).toFixed(0) : 0}%`, 14, yPos + 42);
+            doc.text(`Total de Caixas: ${totalCx}`, 14, yPos + 30);
+            doc.text(`Margem de Lucro: ${totalV > 0 ? ((saldo/totalV)*100).toFixed(0) : 0}%`, 14, yPos + 35);
+
+            let nextY = yPos + 38;
+
+            // Se for MÊS, mostra contexto da safra
+            if(tipo === 'mes') {
+                const vSafra = allV.filter(i => i.dt.startsWith(anoF));
+                const gSafra = allG.filter(i => i.dt.startsWith(anoF));
+                const totalVSafra = vSafra.reduce((s, i) => s + i.t, 0);
+                const totalGSafra = gSafra.reduce((s, i) => s + i.v, 0);
+                const saldoSafra = totalVSafra - totalGSafra;
+
+                doc.setDrawColor(200); 
+                doc.setFillColor(248, 250, 252);
+                doc.roundedRect(14, nextY, 181, 20, 3, 3, 'FD');
+
+                doc.setFontSize(9);
+                doc.setTextColor(100);
+                doc.text(`CONTEXTO: SAFRA ${anoF} ACUMULADA`, 18, nextY + 6);
+
+                doc.setFontSize(10);
+                doc.setTextColor(0); 
+                doc.text(`Receita: ${FORMAT_BRL.format(totalVSafra)}`, 18, nextY + 14);
+                doc.text(`Despesas: ${FORMAT_BRL.format(totalGSafra)}`, 70, nextY + 14);
+
+                if(saldoSafra >= 0) doc.setTextColor(27, 94, 32); else doc.setTextColor(198, 40, 40);
+                doc.setFont("helvetica", "bold");
+                doc.text(`Resultado Safra: ${FORMAT_BRL.format(saldoSafra)}`, 120, nextY + 14);
+                doc.setFont("helvetica", "normal");
+                
+                nextY += 25;
+            }
 
             const tableBody = [
                 ...v.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), `${i.q} Caixas`, `R$ ${i.p.toFixed(2)}`, `+ ${FORMAT_BRL.format(i.t)}`]),
                 ...g.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), i.d, '-', `- ${FORMAT_BRL.format(i.v)}`])
-            ].sort((a,b) => b[0].split('/').reverse().join('-').localeCompare(a[0].split('/').reverse().join('-')));
+            ].sort((a,b) => b[0].split('/').reverse().join('-').localeCompare(a[0].split('/').reverse().join('')));
             
             if(tableBody.length > 0) {
                 doc.autoTable({
-                    startY: yPos + 50,
+                    startY: nextY,
                     head: [['Data', 'Descrição', 'Unitário/Obs', 'Valor']],
                     body: tableBody,
                     theme: 'striped',
@@ -1045,116 +1266,8 @@
                     columnStyles: { 0: { cellWidth: 30 }, 3: { halign: 'right', fontStyle: 'bold' } }
                 });
             }
-            doc.save(`Chuchuzeiro_${getSafeFileName()}_${filtro}.pdf`);
+            doc.save(`Chuchuzeiro_${tipo}_${getSafeFileName()}_${filtroRaw}.pdf`);
             showToast("PDF salvo!");
-        }
-
-        // -------------------- PDF SAFRA ANUAL (CORRIGIDO) --------------------
-        async function gerarRelatorioSafraPDF() {
-            fecharModalRelatorios();
-            showToast("Gerando PDF Safra...");
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            const anoAtual = new Date().getFullYear();
-            const allV = await getAll("vendas");
-            const allG = await getAll("gastos");
-            
-            // Dados agregados por mês
-            const mesesDados = Array(12).fill(null).map(() => ({ q: 0, v: 0, g: 0 }));
-            
-            allV.forEach(v => {
-                if (v.dt.startsWith(anoAtual)) {
-                    const m = parseInt(v.dt.split('-')[1]) - 1;
-                    mesesDados[m].q += v.q;
-                    mesesDados[m].v += v.t;
-                }
-            });
-            allG.forEach(g => {
-                if (g.dt.startsWith(anoAtual)) {
-                    const m = parseInt(g.dt.split('-')[1]) - 1;
-                    mesesDados[m].g += g.v;
-                }
-            });
-
-            // Achar melhor mês de produção
-            let maxQ = 0;
-            mesesDados.forEach(m => { if(m.q > maxQ) maxQ = m.q; });
-
-            // Cabeçalho
-            doc.setFillColor(27, 94, 32); 
-            doc.rect(0, 0, doc.internal.pageSize.getWidth(), 45, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(24);
-            doc.setFont("helvetica", 'bold');
-            doc.text("SAFRA ANUAL", doc.internal.pageSize.getWidth()/2, 20, { align: 'center' });
-            doc.setFontSize(12);
-            doc.setFont("helvetica", 'normal');
-            doc.text(`${removerAcentos(getUserName())} • Ano: ${anoAtual}`, doc.internal.pageSize.getWidth()/2, 35, { align: 'center' });
-
-            const tableBody = [];
-            const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-            
-            let totalAnoQ = 0;
-            let totalAnoLucro = 0;
-            let bestMonthIndex = -1; // Para pintar a linha
-
-            mesesDados.forEach((d, i) => {
-                const lucro = d.v - d.g;
-                totalAnoQ += d.q;
-                totalAnoLucro += lucro;
-                
-                let mesNome = nomesMeses[i];
-                // Removemos o emoji aqui para corrigir o erro de texto, usamos texto puro
-                if (d.q > 0 && d.q === maxQ) {
-                    mesNome += " (Melhor Safra)";
-                    bestMonthIndex = i;
-                }
-
-                tableBody.push([
-                    mesNome,
-                    d.q + " cx",
-                    FORMAT_BRL.format(d.v),
-                    FORMAT_BRL.format(d.g),
-                    FORMAT_BRL.format(lucro)
-                ]);
-            });
-
-            // Linha de Total
-            tableBody.push([
-                "TOTAL ANUAL", 
-                totalAnoQ + " cx", 
-                "-", 
-                "-", 
-                FORMAT_BRL.format(totalAnoLucro)
-            ]);
-
-            doc.autoTable({
-                startY: 55,
-                head: [['Mês', 'Produção', 'Receita', 'Despesa', 'Lucro']],
-                body: tableBody,
-                theme: 'striped',
-                headStyles: { fillColor: [27, 94, 32], textColor: 255, fontStyle: 'bold' },
-                columnStyles: { 
-                    0: { fontStyle: 'bold' },
-                    4: { halign: 'right', fontStyle: 'bold' } 
-                },
-                didParseCell: function(data) {
-                    // Pintar linha de total em cinza
-                    if (data.row.index === tableBody.length - 1) {
-                        data.cell.styles.fillColor = [220, 220, 220];
-                        data.cell.styles.fontStyle = 'bold';
-                    }
-                    // Pintar linha da MELHOR SAFRA em dourado suave para destacar sem emoji
-                    if (bestMonthIndex !== -1 && data.row.index === bestMonthIndex) {
-                        data.cell.styles.fillColor = [255, 248, 220]; // Dourado bem claro
-                        data.cell.styles.textColor = [180, 83, 9]; // Marrom dourado escuro
-                    }
-                }
-            });
-
-            doc.save(`Chuchuzeiro_Safra_${anoAtual}.pdf`);
-            showToast("PDF Safra salvo!");
         }
 
         // -------------------- COMPARTILHAR WHATSAPP --------------------
@@ -1174,13 +1287,23 @@
             const saldo = totalV - totalG;
             const totalCx = v.reduce((s, i) => s + i.q, 0);
 
+            const vSafra = allV.filter(i => i.dt.startsWith(ano));
+            const gSafra = allG.filter(i => i.dt.startsWith(ano));
+            const totalVSafra = vSafra.reduce((s, i) => s + i.t, 0);
+            const totalGSafra = gSafra.reduce((s, i) => s + i.v, 0);
+            const saldoSafra = totalVSafra - totalGSafra;
+
             let msg = `*CHUCHUZEIRO - RELATÓRIO*\n`;
             msg += `👤 ${getUserName()}\n🗓 ${nomeMes}/${ano}\n\n`;
+            msg += `*RESUMO DO MÊS:*\n`;
             msg += `📦 Caixas: ${totalCx}\n`;
             msg += `✅ Entradas: ${FORMAT_BRL.format(totalV)}\n`;
             msg += `🔻 Saídas: ${FORMAT_BRL.format(totalG)}\n`;
-            msg += `💰 *Saldo: ${FORMAT_BRL.format(saldo)}*\n`;
-            msg += `📊 Margem: ${totalV > 0 ? ((saldo/totalV)*100).toFixed(0) : 0}%\n\n`;
+            msg += `💰 *Saldo Mês: ${FORMAT_BRL.format(saldo)}*\n\n`;
+            msg += `*RESUMO DA SAFRA (${ano}):*\n`;
+            msg += `📈 Receita: ${FORMAT_BRL.format(totalVSafra)}\n`;
+            msg += `📉 Custo: ${FORMAT_BRL.format(totalGSafra)}\n`;
+            msg += `🚜 *Resultado Safra: ${FORMAT_BRL.format(saldoSafra)}*\n\n`;
             msg += `_Gerado pelo App Chuchuzeiro_`;
 
             const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
@@ -1227,10 +1350,10 @@
             tx.objectStore("vendas").clear();
             tx.objectStore("gastos").clear();
             tx.oncomplete = () => { 
-                 localStorage.removeItem(AUTO_BACKUP_KEY); 
-                 showToast("Tudo limpo!"); 
-                 render(); 
-             };
+                localStorage.removeItem(AUTO_BACKUP_KEY); 
+                showToast("Tudo limpo!"); 
+                render(); 
+            };
         }
 
         // -------------------- NAVEGAÇÃO ENTRE ABAS --------------------
@@ -1248,6 +1371,7 @@
             initDB();
             setTodayDate();
             checkUser();
+            setupKeyboardHelpers();
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('./sw.js').catch(() => {});
             }
