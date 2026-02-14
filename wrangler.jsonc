@@ -1,13 +1,7 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "chuchuzeiro",
-  "main": "src/index.js",
-  "compatibility_date": "2024-02-14",
+  "compatibility_date": "2026-02-14",
   "assets": {
-    "directory": "public",
-    "binding": "ASSETS"
-  },
-  "observability": {
-    "enabled": true
+    "directory": "."
   }
 }
