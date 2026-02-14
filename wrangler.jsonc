@@ -1,13 +1,9 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "chuchuzeiro",
-  "main": "index.js", // Agora aponta para a raiz
+  "main": "index.js",
   "compatibility_date": "2026-02-14",
   "assets": {
-    "directory": ".", // Procura os arquivos HTML na raiz
+    "directory": ".",
     "binding": "ASSETS"
-  },
-  "observability": {
-    "enabled": true
   }
 }
