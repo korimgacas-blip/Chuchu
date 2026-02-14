@@ -1,7 +1,14 @@
 {
-  "name": "chuchuzeiro",
-  "compatibility_date": "2026-02-14",
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "chuchuzeiro-app",
+  "main": "src/index.js",
+  "compatibility_date": "2024-02-14",
+  // Configuração para servir o site estático (HTML/JS/CSS)
   "assets": {
-    "directory": "."
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
   }
 }
