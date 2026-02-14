@@ -1,0 +1,7 @@
+name = "chuchuzeiro"
+compatibility_date = "2024-02-13"
+
+# Isso diz ao Cloudflare para hospedar os arquivos da pasta atual como um site
+[assets]
+directory = "."
+binding = "ASSETS"
