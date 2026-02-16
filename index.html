@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -12,7 +13,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -20,408 +21,303 @@
     <style>
         :root {
             --p: #1b5e20;
-            --p-dark: #0e3d12;
-            --income: #1b5e20;
+            --p-light: #4c8c4a;
+            --p-dark: #003300;
+            --income: #2e7d32;
             --expense: #c62828;
-            --bg: #f3f4f6;
-            --card-bg: #ffffff;
-            --radius: 20px;
-            --chart-line: #1b5e20;
+            --bg: #f0fdf4;
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.9);
+            --radius: 16px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
+
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body {
             background: var(--bg);
             margin: 0;
-            padding-bottom: 110px; /* Espaço original para o menu */
-            color: #111;
+            padding-bottom: 110px;
+            color: #1f2937;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
-            transition: padding-bottom 0.3s;
         }
 
-        /* CLASSE AUXILIAR PARA QUANDO O TECLADO ABRE */
-        body.keyboard-open {
-            padding-bottom: 20px !important; /* Remove o espaço extra do menu */
-        }
-        
-        /* Esconde o menu quando a classe keyboard-open está no body */
-        body.keyboard-open nav {
-            transform: translateY(150%); /* Move para baixo da tela */
-            opacity: 0;
-            pointer-events: none;
-        }
+        body.keyboard-open { padding-bottom: 20px !important; }
+        body.keyboard-open nav { transform: translateY(150%); opacity: 0; pointer-events: none; }
 
-        .gpu-accelerated {
-            transform: translate3d(0, 0, 0);
-            backface-visibility: hidden;
-            perspective: 1000px;
-        }
-
-        /* Header com gradiente verde */
+        /* --- Header Flat Glass Compacto --- */
         header {
-            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            background: rgba(27, 94, 32, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             color: white;
-            padding: 20px 24px 70px;
-            border-radius: 0 0 36px 36px;
+            padding: 15px 20px 60px;
+            border-radius: 0 0 24px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
+            box-shadow: 0 4px 20px rgba(27, 94, 32, 0.15);
             position: relative;
             z-index: 10;
         }
+        
         .header-content { display: flex; flex-direction: column; justify-content: center; }
-        .app-title { font-weight: 800; font-size: 1.2rem; }
-        .user-greeting { font-size: 0.8rem; font-weight: 500; opacity: 0.9; margin-top: 4px; display: none; }
+        
+        .app-title { 
+            font-weight: 700; 
+            font-size: 1.1rem; 
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-greeting { 
+            font-size: 0.75rem; 
+            font-weight: 400; 
+            opacity: 0.9; 
+            margin-top: 2px; 
+            color: #a5d6a7;
+        }
 
-        /* Dashboard 2+1 cards */
+        #status-tag {
+            font-size: 0.65rem;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(4px);
+        }
+
+        /* --- Dashboard --- */
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            padding: 0 24px;
-            margin-top: -50px;
+            gap: 12px;
+            padding: 0 20px;
+            margin-top: -45px;
             position: relative;
             z-index: 20;
         }
+        
         .dash-card {
-            background: var(--card-bg);
-            padding: 20px 16px;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 16px 12px;
             border-radius: var(--radius);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow);
             text-align: center;
-            contain: content;
-            transform: translateZ(0);
         }
-        .dash-card small { color: #6b7280; font-size: 0.7rem; text-transform: uppercase; font-weight: 700; }
-        .dash-card b { font-size: 1.2rem; display: block; margin-top: 5px; }
-        .dash-card.full-width { grid-column: span 2; display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 16px 24px; }
+        
+        .dash-card small { color: #555; font-size: 0.7rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+        .dash-card b { font-size: 1.1rem; display: block; margin-top: 4px; color: #000; }
+        .dash-card.full-width { grid-column: span 2; display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 16px 20px; }
 
         .container { padding: 20px; max-width: 600px; margin: 0 auto; }
-
+        
         .view { display: none; will-change: transform, opacity; }
-        .view.active { display: block; animation: fadeIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
-
+        .view.active { display: block; animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
+        /* --- Cards UI Refinada --- */
         .card {
             background: white;
             padding: 20px;
             border-radius: var(--radius);
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08);
-            transform: translateZ(0);
-            transition: transform 0.2s;
-        }
-        .card:active { transform: scale(0.99) translateZ(0); }
-
-        input, select { 
-            width: 100%; 
-            padding: 14px; 
-            border-radius: 12px; 
-            border: 1px solid #e5e7eb; 
-            background: #f9fafb; 
-            margin-bottom: 15px; 
-            font-size: 16px; 
-            transition: all 0.2s;
-        }
-        input:focus, select:focus { 
-            border-color: var(--p); 
-            box-shadow: 0 0 0 3px rgba(27,94,32,0.1); 
-            outline: none; 
-            background: white;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e5e7eb;
         }
 
-        button { 
-            width: 100%; 
-            padding: 15px; 
-            border-radius: 12px; 
-            border: none; 
+        h3 { 
+            font-size: 1rem; 
             font-weight: 700; 
-            cursor: pointer; 
+            color: #111; 
+            margin: 0 0 15px 0; 
             display: flex; 
             align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            transition: all 0.2s; 
-        }
-        button:active { transform: scale(0.98); opacity: 0.9; }
-
-        .btn-income { background: var(--income); color: white; }
-        .btn-expense { background: var(--expense); color: white; }
-        .btn-delete { background: #fff1f2; color: #e11d48; margin-top: 10px; border: 1px solid #fecaca; }
-        .btn-sec { background: #f3f4f6; color: #4b5563; }
-        .btn-primary { background: var(--p); color: white; }
-        .btn-pix { background: #32bcad; color: white; }
-        .btn-mp { background: #009ee3; color: white; }
-        .btn-wpp { background: #25d366; color: white; }
-        .btn-tutorial { background: #8b5cf6; color: white; }
-        .btn-pdf { background: #374151; color: white; }
-        .btn-pdf-year { background: #1e3a5f; color: white; }
-        .btn-update { background: #f59e0b; color: white; }
-
-        /* Navegação inferior flutuante */
-        nav {
-            position: fixed; bottom: 20px; left: 16px; right: 16px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            z-index: 100;
-            transform: translateZ(0) translateY(0);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
-        }
-        .nav-buttons { display: flex; height: 70px; justify-content: space-around; align-items: center; }
-        .tab { color: #9ca3af; font-size: 0.65rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; transition: color 0.2s; }
-        .tab.active { color: var(--p); }
-        .tab i { font-size: 1.2rem; margin-bottom: 2px; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .tab.active i { transform: translateY(-3px); }
-
-        /* Lista de registros */
-        .item { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 15px 0; 
-            border-bottom: 1px solid #f3f4f6; 
-            cursor: pointer; 
-            transition: background 0.1s;
-            align-items: center;
-        }
-        .item:hover { background: #fafafa; }
-        .item-date-box {
-            background: #f3f4f6; padding: 6px 10px; border-radius: 8px; text-align: center; min-width: 50px;
-        }
-        .item-date-box span { display: block; font-size: 0.7rem; color: #666; text-transform: uppercase; }
-        .item-date-box strong { display: block; font-size: 1.1rem; color: #333; line-height: 1; margin-top: 2px; }
-        .item-desc { margin-left: 12px; flex: 1; }
-        .item-desc b { display: block; font-size: 0.95rem; color: #1f2937; margin-bottom: 2px; }
-        .item-desc small { color: #6b7280; font-size: 0.8rem; }
-
-        /* Toast */
-        #toast {
-            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateZ(0);
-            background: #333; color: white; padding: 12px 24px; border-radius: 50px;
-            opacity: 0; transition: opacity 0.3s; z-index: 2000; pointer-events: none;
-            will-change: opacity; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            gap: 8px;
         }
 
-        /* Gráfico */
-        canvas { 
-            transform: translateZ(0); 
-            max-height: 250px; 
-            width: 100% !important; 
-        }
-
-        /* MODAIS GLASS */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(6px);
-            z-index: 5000; display: none; align-items: center; justify-content: center;
-            padding: 20px;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-            padding: 30px 20px; border-radius: 30px;
-            text-align: center; width: 100%; max-width: 340px;
-            transform: translateZ(0);
-            animation: floatUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .glass-input {
-            background: rgba(255,255,255,0.8);
-            border: 2px solid transparent;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-        .glass-input:focus { border-color: var(--p); background: white; }
-
-        @keyframes floatUp {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        /* Tutorial */
-        .tutorial-list {
-            text-align: left;
-            padding-left: 0;
-            list-style: none;
-            margin: 10px 0;
-        }
-        .tutorial-list h4 {
-            margin: 20px 0 8px;
-            color: var(--p);
+        /* --- Formulários --- */
+        label { font-size: 0.8rem; font-weight: 600; color: #4b5563; margin-bottom: 4px; display: block; }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            background: #f9fafb;
+            margin-bottom: 15px;
             font-size: 0.95rem;
-            font-weight: 700;
+            transition: all 0.2s;
+            color: #111;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--p);
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
+        }
+
+        /* --- Botões --- */
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 5px;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.1s, opacity 0.2s;
+            margin-bottom: 8px;
         }
-        .tutorial-list ul {
-            padding-left: 20px;
-            margin: 0 0 5px 0;
-            list-style: none;
-        }
-        .tutorial-list li {
-            margin-bottom: 10px;
-            font-size: 0.8rem;
-            color: #4b5563;
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            line-height: 1.4;
-        }
-        .tutorial-list li i { color: var(--p); margin-top: 2px; min-width: 18px; text-align: center; }
+        button:active { transform: scale(0.97); }
 
-        /* Backup alert */
-        .backup-alert {
-            background: #eff6ff; border: 1px solid #dbeafe; padding: 12px 16px; border-radius: 12px;
-            margin-bottom: 20px; display: none; align-items: center; justify-content: space-between;
-        }
-
-        /* Info e privacidade */
-        .info-section { font-size: 0.85rem; line-height: 1.5; color: #4b5563; }
-        .privacy-box { background: #f0fdf4; border: 1px solid #10b981; padding: 15px; border-radius: 15px; margin-top: 15px; color: #065f46; }
-
-        /* Modal de confirmação */
-        #custom-modal .modal-box {
-            background: white; width: 85%; max-width: 320px; padding: 24px; border-radius: 20px; text-align: center;
-            transform: scale(0.9); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-        }
-        #custom-modal.open { display: flex; }
-        .modal-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
-        .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: #111; }
-
-        /* Grid para botões de PDF */
-        .pdf-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        /* Estilos para os níveis de apoio (tiers) */
+        .btn-income { background: var(--income); color: white; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2); }
+        .btn-expense { background: var(--expense); color: white; box-shadow: 0 4px 10px rgba(198, 40, 40, 0.2); }
+        .btn-primary { background: var(--p); color: white; }
+        .btn-sec { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+        .btn-update { background: #f59e0b; color: white; }
+        .btn-delete { background: white; color: #ef4444; border: 1px solid #fecaca; }
+        
+        /* Botões Especiais */
+        .btn-backup-html { background: #0284c7; color: white; }
+        .btn-backup-json { background: #64748b; color: white; }
+        .btn-install { background: linear-gradient(135deg, #1b5e20, #004d40); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        /* --- Tiers Support --- */
         .tiers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
             margin-top: 20px;
             margin-bottom: 15px;
         }
         .tier-card {
             background: white;
             border-radius: 16px;
-            padding: 18px 14px;
+            padding: 15px 10px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.03);
-            transition: transform 0.15s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
             border: 1px solid #f0f0f0;
             position: relative;
         }
-        .tier-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(27,94,32,0.08);
-        }
-        .tier-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-        .tier-title {
-            font-weight: 800;
-            color: var(--p);
-            font-size: 1rem;
-            margin-bottom: 4px;
-        }
-        .tier-price {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #2d3748;
-            margin-bottom: 8px;
-        }
-        .tier-description {
-            font-size: 0.75rem;
-            color: #4b5563;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        .tier-qr {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
-            border-radius: 8px;
-            background: #f9fafb;
-            padding: 5px;
-            cursor: zoom-in;
-        }
-        .zoom-hint {
-            font-size: 0.75rem;
-            color: var(--p);
-            margin-top: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            transition: transform 0.2s;
-        }
-        .zoom-hint:active { transform: scale(0.95); }
-
+        .tier-icon { font-size: 1.8rem; margin-bottom: 6px; }
+        .tier-title { font-weight: 800; color: var(--p); font-size: 0.85rem; margin-bottom: 4px; }
+        .tier-price { font-weight: 700; font-size: 0.9rem; color: #2d3748; margin-bottom: 6px; }
+        .tier-description { font-size: 0.7rem; color: #666; margin-bottom: 10px; line-height: 1.3; }
+        .tier-qr { width: 100px; height: 100px; object-fit: contain; margin: 0 auto; display: block; }
+        .zoom-hint { font-size: 0.7rem; color: var(--p); margin-top: 5px; cursor: pointer; font-weight: 700; }
+        
         .badge-popular {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--p);
-            color: white;
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 4px 12px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            box-shadow: 0 2px 4px rgba(27,94,32,0.3);
-            white-space: nowrap;
+            position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+            background: var(--p); color: white; font-size: 0.6rem; font-weight: 800;
+            padding: 3px 8px; border-radius: 20px; white-space: nowrap;
         }
+
+        /* --- Install Steps Poup Up Specific --- */
+        .install-popup-content { text-align: left; }
+        .install-section { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .install-section:last-child { border-bottom: none; }
+        .install-title { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #333; margin-bottom: 8px; }
+        .install-steps-list { font-size: 0.85rem; color: #555; line-height: 1.6; margin: 0; padding-left: 20px; }
+        .step-highlight { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; font-weight: 600; color: #1e293b; font-size: 0.75rem; }
+
+        /* --- Navegação --- */
+        nav {
+            position: fixed; bottom: 20px; left: 16px; right: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            z-index: 100;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .nav-buttons { display: flex; height: 65px; justify-content: space-around; align-items: center; }
+        .tab { color: #9ca3af; font-size: 0.65rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; transition: 0.2s; }
+        .tab i { font-size: 1.2rem; margin-bottom: 2px; }
+        .tab.active { color: var(--p); transform: translateY(-2px); }
+
+        /* --- Listas --- */
+        .item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 0; border-bottom: 1px solid #f3f4f6; 
+        }
+        .item-date-box { 
+            background: #f1f8e9; padding: 6px 10px; border-radius: 8px; text-align: center; min-width: 45px; 
+            color: var(--p);
+        }
+        .item-date-box strong { display: block; font-size: 1rem; line-height: 1; }
+        .item-desc { margin-left: 12px; flex: 1; }
+        .item-desc b { display: block; font-size: 0.9rem; color: #111; font-weight: 600; }
+        
+        /* --- Modais --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px);
+            z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .glass-card {
+            background: white; border-radius: 24px; padding: 24px; width: 100%; max-width: 340px;
+            text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        #toast {
+            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            background: #1f2937; color: white; padding: 10px 20px; border-radius: 30px;
+            font-size: 0.85rem; font-weight: 600; opacity: 0; pointer-events: none; z-index: 6000; transition: 0.3s;
+        }
+        
+        /* Tutorial List Better Styling */
+        .tutorial-item { margin-bottom: 20px; border-bottom: 1px dashed #eee; padding-bottom: 15px; }
+        .tutorial-item:last-child { border: none; }
+        .tutorial-head { display: flex; align-items: center; gap: 8px; color: var(--p); font-weight: 700; margin-bottom: 5px; font-size: 0.95rem; }
+        .tutorial-body { font-size: 0.85rem; color: #4b5563; line-height: 1.5; padding-left: 24px; }
     </style>
 </head>
 <body>
-    <header class="gpu-accelerated">
+
+    <header>
         <div class="header-content">
-            <div class="app-title"><i class="fas fa-leaf"></i> CHUCHUZEIRO</div>
-            <div id="user-greeting" class="user-greeting"></div>
+            <div class="app-title" id="header-title">
+                <i class="fas fa-leaf"></i> CHUCHUZEIRO
+            </div>
+            <div id="user-greeting" class="user-greeting">Gestão Financeira</div>
         </div>
-        <div id="status-tag"><i class="fas fa-cloud-sun"></i> ONLINE</div>
+        <div id="status-tag"><i class="fas fa-wifi"></i> OFF</div>
     </header>
 
     <div class="dashboard">
         <div class="dash-card">
-            <small><i class="fas fa-boxes"></i> Volume Mês</small>
+            <small><i class="fas fa-box"></i> Caixas</small>
             <b id="dash-cx">0</b>
-            <span style="font-size:0.7rem; color:#666">caixas</span>
         </div>
         <div class="dash-card">
-            <small><i class="fas fa-coins"></i> Saldo Líquido</small>
+            <small><i class="fas fa-wallet"></i> Líquido</small>
             <b id="dash-rs">R$ 0,00</b>
         </div>
         <div class="dash-card full-width">
             <div>
-                <small style="margin-bottom:0"><i class="fas fa-chart-line"></i> Margem de Lucro</small>
+                <small style="margin-bottom:0"><i class="fas fa-percentage"></i> Margem</small>
                 <b id="dash-margin" style="font-size:1.2rem;">0%</b>
             </div>
             <div style="text-align: right;">
-                <div style="font-size:0.75rem; color:var(--p)"><i class="fas fa-arrow-up"></i> Entrada: <span id="dash-in">R$ 0</span></div>
-                <div style="font-size:0.75rem; color:var(--expense)"><i class="fas fa-arrow-down"></i> Saída: <span id="dash-out">R$ 0</span></div>
+                <div style="font-size:0.75rem; color:var(--income)"><i class="fas fa-arrow-up"></i> <span id="dash-in">0</span></div>
+                <div style="font-size:0.75rem; color:var(--expense)"><i class="fas fa-arrow-down"></i> <span id="dash-out">0</span></div>
             </div>
         </div>
     </div>
@@ -429,111 +325,123 @@
     <div id="welcome-modal" class="modal-overlay">
         <div class="glass-card">
             <div style="font-size: 3rem; margin-bottom: 10px;">🌱</div>
-            <h2 style="color: var(--p); margin: 0 0 10px;">Bem-vindo(a)!</h2>
-            <p style="color: #4b5563; font-size: 0.9rem; margin-bottom: 20px;">
-                Como você quer ser chamado(a) nos relatórios?
-            </p>
-            <input type="text" id="user-name-input" class="glass-input" placeholder="Ex: Sítio Esperança, Sr. João...">
-            <button class="btn-primary" onclick="salvarUsuario()">Começar</button>
+            <h2 style="color: var(--p); margin: 0 0 10px;">Bem-vindo!</h2>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">Como é o nome do seu Sítio ou Negócio?</p>
+            <input type="text" id="user-name-input" placeholder="Ex: Sítio Esperança, Zé do Chuchu...">
+            <button class="btn-primary" onclick="salvarUsuario()">Começar a Usar</button>
         </div>
     </div>
 
-    <div id="tutorial-modal" class="modal-overlay">
-        <div class="glass-card" style="max-height: 85vh; overflow-y: auto; padding: 25px 20px; text-align: left;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3 style="color: var(--p); margin: 0; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-book-open"></i> Guia Completo
-                </h3>
-                <i class="fas fa-times" onclick="closeTutorialModal()" style="font-size: 1.5rem; color: #9ca3af; cursor: pointer;"></i>
+    <div id="custom-modal" class="modal-overlay">
+        <div class="glass-card">
+            <span style="font-size: 2.5rem; display:block; margin-bottom:10px;" id="modal-icon">⚠️</span>
+            <h3 id="modal-title" style="margin-bottom: 8px;">Confirmação</h3>
+            <p id="modal-desc" style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">Tem certeza?</p>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-sec" id="modal-btn-cancel">Cancelar</button>
+                <button class="btn-primary" id="modal-btn-confirm">Confirmar</button>
             </div>
-            
-            <div class="tutorial-list">
-                <h4><i class="fas fa-seedling"></i> Registrar Colheita (Venda)</h4>
-                <ul>
-                    <li><i class="fas fa-pencil-alt"></i> <div><b>Aba "Colheita":</b> informe a quantidade de caixas, preço por caixa e data.</div></li>
-                    <li><i class="fas fa-check-circle"></i> <div>Clique em <strong>"Confirmar Venda"</strong>. O valor total é calculado automaticamente.</div></li>
-                    <li><i class="fas fa-edit"></i> <div>Para editar, clique sobre o item na aba "Relatórios".</div></li>
-                </ul>
-
-                <h4><i class="fas fa-tools"></i> Registrar Despesas</h4>
-                <ul>
-                    <li><i class="fas fa-pencil-alt"></i> <div><b>Aba "Despesas":</b> descreva o gasto, valor e data.</div></li>
-                    <li><i class="fas fa-check-circle"></i> <div>Clique em <strong>"Registrar Gasto"</strong>.</div></li>
-                    <li><i class="fas fa-edit"></i> <div>Edição rápida: toque no extrato e altere os dados.</div></li>
-                </ul>
-
-                <h4><i class="fas fa-chart-pie"></i> Relatórios e Gráficos</h4>
-                <ul>
-                    <li><i class="fas fa-calendar-alt"></i> <div><b>Filtro por mês:</b> selecione o período no topo da aba "Relatórios".</div></li>
-                    <li><i class="fas fa-chart-line"></i> <div><b>Gráfico de linhas:</b> mostra a quantidade de caixas vendidas por dia no mês.</div></li>
-                    <li><i class="fas fa-tachometer-alt"></i> <div><b>Dashboard:</b> volume, saldo, margem de lucro e entradas/saídas.</div></li>
-                    <li><i class="fas fa-list-ul"></i> <div><b>Extrato completo:</b> todas as vendas e despesas do mês, com edição.</div></li>
-                </ul>
-
-                <h4><i class="fas fa-file-pdf"></i> Backup e Relatórios</h4>
-                <ul>
-                    <li><i class="fas fa-file-pdf"></i> <div><b>PDF profissional:</b> relatório mensal com tabelas, resumo e cabeçalho personalizado.</div></li>
-                    <li><i class="fab fa-whatsapp"></i> <div><b>Enviar no WhatsApp:</b> compartilhe o PDF ou um resumo com seu contador/sócio.</div></li>
-                    <li><i class="fas fa-database"></i> <div><b>Backup JSON:</b> exporte seus dados para guardar no e-mail, Drive ou PC.</div></li>
-                    <li><i class="fas fa-upload"></i> <div><b>Importar:</b> restaure um backup anterior a qualquer momento.</div></li>
-                    <li><i class="fas fa-bell"></i> <div><b>Alerta de backup:</b> se passarem 7 dias sem backup, o app lembra você.</div></li>
-                </ul>
-
-                <h4><i class="fas fa-microchip"></i> Recursos Avançados</h4>
-                <ul>
-                    <li><i class="fas fa-mobile-alt"></i> <div><b>Instale como App (PWA):</b> no Chrome, use "Adicionar à tela inicial".</div></li>
-                    <li><i class="fas fa-wifi-slash"></i> <div><b>Funciona offline:</b> use no campo, sem internet – os dados ficam no seu celular.</div></li>
-                    <li><i class="fas fa-user-secret"></i> <div><b>Privacidade radical:</b> NENHUM dado sai do seu dispositivo (IndexedDB).</div></li>
-                </ul>
-
-                <h4><i class="fas fa-heart"></i> Apoie o Projeto</h4>
-                <ul>
-                    <li><i class="fas fa-qrcode"></i> <div><b>PIX:</b> QR Code na aba "Apoie".</div></li>
-                    <li><i class="fas fa-credit-card"></i> <div><b>Mercado Pago:</b> doe com cartão ou boleto.</div></li>
-                    <li><i class="fab fa-whatsapp"></i> <div><b>Contato direto:</b> fale com o desenvolvedor.</div></li>
-                    <li><i class="fas fa-book-reader"></i> <div><b>Tutorial:</b> este guia está sempre disponível na aba Apoie.</div></li>
-                </ul>
-            </div>
-            
-            <button class="btn-primary" onclick="closeTutorialModal()" style="margin-top: 20px; width: 100%;">
-                <i class="fas fa-check"></i> Entendi, vamos lá!
-            </button>
         </div>
     </div>
 
     <div id="pix-modal" class="modal-overlay" onclick="closePixModal()">
         <div class="glass-card" onclick="event.stopPropagation()">
-            <h3 id="modal-qr-title" style="color: var(--p); margin-top: 0;">Mantenha o projeto vivo ☕</h3>
-            <div style="background: white; padding: 15px; border-radius: 15px; display: inline-block; margin: 10px 0;">
-                <img id="modal-qr-img" src="" alt="QR Code Ampliado" style="width: 250px; height: 250px; object-fit: contain; display: block;">
+            <h3 id="modal-qr-title" style="color: var(--p); margin-top: 0;">Apoiar</h3>
+            <div style="background: white; padding: 10px; border-radius: 10px; border: 1px solid #eee; display: inline-block;">
+                <img id="modal-qr-img" src="" style="width: 250px; height: 250px; object-fit: contain; display: block;">
             </div>
-            <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 20px; line-height: 1.5;">
-                Escaneie o código acima usando o aplicativo do seu banco para apoiar o <b>Chuchuzeiro</b>.
-            </p>
-            <button class="btn-primary" onclick="closePixModal()" style="background: #374151;">
-                <i class="fas fa-times"></i> Fechar
-            </button>
+            <p style="font-size: 0.8rem; color: #666; margin: 15px 0;">Escaneie no App do seu Banco</p>
+            <button class="btn-sec" onclick="closePixModal()">Fechar</button>
+        </div>
+    </div>
+
+    <div id="install-modal" class="modal-overlay">
+        <div class="glass-card" style="max-width: 360px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0; color: var(--p);"><i class="fas fa-download"></i> Instalar App</h3>
+                <i class="fas fa-times" onclick="document.getElementById('install-modal').style.display='none'" style="cursor: pointer; color: #999;"></i>
+            </div>
+            
+            <div class="install-popup-content">
+                <div class="install-section">
+                    <div class="install-title"><i class="fab fa-apple" style="font-size: 1.2rem;"></i> iOS (iPhone/iPad)</div>
+                    <ol class="install-steps-list">
+                        <li>Toque no botão <b>Compartilhar</b> <span class="step-highlight"><i class="fas fa-share-square"></i></span> na barra inferior.</li>
+                        <li>Role para baixo e toque em <span class="step-highlight">Adicionar à Tela de Início</span>.</li>
+                        <li>Confirme clicando em <b>Adicionar</b>.</li>
+                    </ol>
+                </div>
+                
+                <div class="install-section">
+                    <div class="install-title"><i class="fab fa-android" style="color: #3ddc84; font-size: 1.2rem;"></i> Android (Chrome)</div>
+                    <ol class="install-steps-list">
+                        <li>Toque no menu de <b>3 pontinhos</b> <span class="step-highlight"><i class="fas fa-ellipsis-v"></i></span> no topo.</li>
+                        <li>Toque em <span class="step-highlight"><i class="fas fa-mobile-alt"></i> Instalar aplicativo</span> ou "Adicionar à tela inicial".</li>
+                        <li>Confirme a instalação.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="document.getElementById('install-modal').style.display='none'">Entendi</button>
+        </div>
+    </div>
+    
+    <div id="tutorial-modal" class="modal-overlay">
+        <div class="glass-card" style="max-height: 85vh; overflow-y: auto; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="color: var(--p); margin: 0;"><i class="fas fa-book-open"></i> Manual do Produtor</h3>
+                <i class="fas fa-times" onclick="document.getElementById('tutorial-modal').style.display='none'" style="cursor: pointer; color: #999;"></i>
+            </div>
+            
+            <div class="tutorial-list">
+                <div class="tutorial-item">
+                    <div class="tutorial-head"><i class="fas fa-shield-alt"></i> 1. Novo Backup Offline</div>
+                    <div class="tutorial-body">
+                        Segurança total contra falta de internet! Ao clicar em <b>"Baixar App (HTML)"</b> na aba Relatórios, você baixa um arquivo único que contém o sistema e seus dados juntos. 
+                        <br><br>
+                        <b>Sem internet?</b> Basta abrir esse arquivo que baixou e continuar usando. Ele se auto-restaura.
+                    </div>
+                </div>
+
+                <div class="tutorial-item">
+                    <div class="tutorial-head"><i class="fas fa-carrot"></i> 2. Controle de Colheita</div>
+                    <div class="tutorial-body">
+                        Na aba <b>Colheita</b>, registre quantas caixas vendeu, o preço da caixa e a data. O sistema calcula o valor total automaticamente e já soma no seu relatório mensal.
+                    </div>
+                </div>
+
+                <div class="tutorial-item">
+                    <div class="tutorial-head"><i class="fas fa-file-invoice-dollar"></i> 3. Relatórios Profissionais</div>
+                    <div class="tutorial-body">
+                        Chega de caderninho! Gere <b>PDFs detalhados</b>. Você pode gerar o relatório só do Mês atual ou da Safra (Ano) inteira para enviar para sócios ou contabilidade.
+                    </div>
+                </div>
+                
+                <div class="tutorial-item">
+                    <div class="tutorial-head"><i class="fas fa-wifi-slash"></i> 4. Modo Offline</div>
+                    <div class="tutorial-body">
+                        O app foi feito para a roça. Ele salva tudo na memória do seu celular. Não precisa de sinal de celular para lançar vendas ou despesas.
+                    </div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="document.getElementById('tutorial-modal').style.display='none'">Fechar Manual</button>
         </div>
     </div>
 
     <div class="container">
-
+        
         <div id="v-venda" class="view active">
             <div class="card">
-                <h3 id="titulo-venda"><i class="fas fa-seedling" style="color: var(--p);"></i> Registrar Colheita</h3>
+                <h3 id="titulo-venda"><i class="fas fa-seedling" style="color: var(--p);"></i> Registrar Venda</h3>
                 <input type="hidden" id="venda-id">
-                
-                <label>Quantidade de Caixas</label>
-                <input type="number" id="q" placeholder="Ex: 50" inputmode="numeric" onfocus="this.select()">
-                
-                <label>Preço por Caixa (R$)</label>
-                <input type="number" id="p" placeholder="0,00" step="0.01" inputmode="decimal" onfocus="this.select()">
-                
+                <label>Qtd. Caixas</label>
+                <input type="number" id="q" placeholder="0" inputmode="numeric">
+                <label>Preço Unitário (R$)</label>
+                <input type="number" id="p" placeholder="0,00" step="0.01" inputmode="decimal">
                 <label>Data</label>
                 <input type="date" id="dv">
-                
-                <button id="btn-acao-venda" class="btn-income" onclick="salvarVenda()"><i class="fas fa-check"></i> Confirmar Venda</button>
-                <button id="btn-cancel-venda" class="btn-sec" style="display:none;" onclick="cancelarEdicao('vendas')"><i class="fas fa-undo-alt"></i> Cancelar</button>
+                <button id="btn-acao-venda" class="btn-income" onclick="salvarVenda()">Confirmar Venda</button>
+                <button id="btn-cancel-venda" class="btn-sec" style="display:none;" onclick="resetForm('vendas')">Cancelar</button>
             </div>
         </div>
 
@@ -541,166 +449,130 @@
             <div class="card">
                 <h3 id="titulo-gasto"><i class="fas fa-tools" style="color: var(--expense);"></i> Registrar Despesa</h3>
                 <input type="hidden" id="gasto-id">
-                
                 <label>Descrição</label>
-                <input type="text" id="d" placeholder="Ex: Adubo, Combustível..." autocomplete="off">
-                
+                <input type="text" id="d" placeholder="Adubo, Gasolina..." autocomplete="off">
                 <label>Valor (R$)</label>
-                <input type="number" id="v" placeholder="0,00" step="0.01" inputmode="decimal" onfocus="this.select()">
-                
+                <input type="number" id="v" placeholder="0,00" step="0.01" inputmode="decimal">
                 <label>Data</label>
                 <input type="date" id="dg">
-                
-                <button id="btn-acao-gasto" class="btn-expense" onclick="salvarGasto()"><i class="fas fa-money-bill-wave"></i> Registrar Gasto</button>
-                <button id="btn-cancel-gasto" class="btn-sec" style="display:none;" onclick="cancelarEdicao('gastos')"><i class="fas fa-undo-alt"></i> Cancelar</button>
+                <button id="btn-acao-gasto" class="btn-expense" onclick="salvarGasto()">Registrar Gasto</button>
+                <button id="btn-cancel-gasto" class="btn-sec" style="display:none;" onclick="resetForm('gastos')">Cancelar</button>
             </div>
         </div>
 
         <div id="v-consulta" class="view">
             <div class="card">
-                <h3><i class="fas fa-chart-line" style="color: var(--p);"></i> Desempenho</h3>
+                <h3><i class="fas fa-chart-line" style="color: var(--p);"></i> Resultados</h3>
                 <select id="filtroMes" onchange="render()"></select>
-
-                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 15px; margin-top: 15px;">
-                    <h4 style="margin: 0 0 10px; color: var(--p-dark); font-size: 0.9rem; display: flex; justify-content: space-between;">
-                        <span><i class="fas fa-calendar-alt"></i> Safra <span id="lbl-ano-safra">----</span></span>
-                        <small style="font-weight: normal; opacity: 0.8">Jan a Dez</small>
-                    </h4>
-                    
-                    <div style="display: flex; justify-content: space-between; text-align: center;">
-                        <div>
-                            <small style="color: #666; font-size: 0.7rem;">RECEITA ANUAL</small>
-                            <div id="safra-total-venda" style="color: var(--income); font-weight: 800; font-size: 0.9rem;">R$ 0,00</div>
-                        </div>
-                        <div>
-                            <small style="color: #666; font-size: 0.7rem;">CUSTO ANUAL</small>
-                            <div id="safra-total-gasto" style="color: var(--expense); font-weight: 800; font-size: 0.9rem;">R$ 0,00</div>
-                        </div>
+                
+                <div style="background: #f1f8e9; padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid #dcedc8;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #555;">
+                        <span>Safra <span id="lbl-ano-safra">2026</span></span>
+                        <span>Acumulado</span>
                     </div>
-                    
-                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #dcfce7; text-align: center;">
-                         <small style="color: #666; font-size: 0.7rem; text-transform: uppercase;">Resultado da Safra</small>
-                         <div id="safra-saldo-final" style="font-size: 1.3rem; font-weight: 900;">R$ 0,00</div>
-                    </div>
+                    <div style="text-align: center; font-size: 1.4rem; font-weight: 800; color: var(--p); margin: 8px 0;" id="safra-saldo-final">R$ 0,00</div>
                 </div>
-                <div style="height:200px; width:100%; margin-top:10px;">
+                <div style="height: 180px; width: 100%; margin-top: 15px;">
                     <canvas id="graficoLinha"></canvas>
                 </div>
             </div>
 
             <div class="card">
-                <h3><i class="fas fa-history"></i> Histórico</h3>
-                <div id="lista-detalhada" class="list-container"></div>
+                <h3><i class="fas fa-list"></i> Extrato</h3>
+                <div id="lista-detalhada"></div>
             </div>
 
-            <div class="card" style="display: flex; flex-direction: column; gap: 10px;">
-                <div id="backup-alert" class="backup-alert">
-                    <div>
-                        <div style="font-weight:700; color:#1e40af; font-size:0.85rem">Backup Pendente</div>
-                        <div style="font-size:0.75rem; color:#60a5fa">Recomendado fazer backup.</div>
-                    </div>
-                    <button style="width: auto; padding: 8px 16px; font-size: 0.75rem; background: #2563eb; color: white;" onclick="exportarManual()"><i class="fas fa-download"></i> BAIXAR</button>
+            <div class="card">
+                <h3><i class="fas fa-database"></i> Dados & Backup</h3>
+                
+                <div id="backup-alert" style="display:none; background:#e0f2fe; color:#0369a1; padding:10px; border-radius:8px; margin-bottom:15px; font-size:0.8rem; align-items:center; gap:10px;">
+                    <i class="fas fa-info-circle"></i> Backup recomendado (7 dias sem salvar).
                 </div>
 
-                <div class="pdf-buttons">
-                    <button class="btn-pdf" onclick="gerarPDF('mes')"><i class="fas fa-file-pdf"></i> PDF (Mês)</button>
-                    <button class="btn-pdf-year" onclick="gerarPDF('ano')"><i class="fas fa-layer-group"></i> PDF (Safra)</button>
+                <label style="margin-top:10px">Exportar App + Dados (HTML)</label>
+                <button class="btn-backup-html" onclick="baixarAppOffline()">
+                    <i class="fas fa-file-code"></i> Baixar App Completo (Offline)
+                </button>
+                <div style="font-size:0.7rem; color:#666; margin-bottom:15px; text-align:center;">
+                    Gera um arquivo .html que abre mesmo sem internet e restaura seus dados.
                 </div>
 
-                <button class="btn-wpp" onclick="compartilharWhatsapp()"><i class="fab fa-whatsapp"></i> Enviar no WhatsApp</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button class="btn-backup-json" onclick="exportarJsonVerify()">
+                        <i class="fas fa-download"></i> Backup JSON
+                    </button>
+                    <button class="btn-sec" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-upload"></i> Restaurar JSON
+                    </button>
+                    <input type="file" id="fileInput" style="display:none" accept=".json" onchange="importarJsonVerify(event)">
+                </div>
+
+                <hr style="border:0; border-top:1px solid #eee; margin: 15px 0;">
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <button class="btn-sec" onclick="exportarManual()"><i class="fas fa-download"></i> Backup JSON</button>
-                    <button class="btn-sec" onclick="document.getElementById('fileInput').click()"><i class="fas fa-upload"></i> Importar JSON</button>
-                    <input type="file" id="fileInput" style="display:none" accept=".json" onchange="iniciarImportacao(event)">
+                    <button class="btn-sec" onclick="gerarPDF('mes')"><i class="fas fa-file-pdf"></i> PDF Mês</button>
+                    <button class="btn-sec" onclick="gerarPDF('ano')"><i class="fas fa-file-pdf"></i> PDF Safra</button>
                 </div>
 
-                <button class="btn-delete" onclick="confirmAction('Apagar Tudo', 'Tem certeza? Todos os dados serão perdidos.', limparBancoDados, '⚠️', '#ef4444')">
-                    <i class="fas fa-trash-alt"></i> Resetar App
+                <button class="btn-delete" style="margin-top: 15px;" onclick="confirmAction('Resetar App', 'ATENÇÃO: Faça um backup manual antes! Isso apagará TODOS os dados, ignorará dados deste arquivo e o app iniciará do zero.', limparBancoDados, '☢️', '#ef4444')">
+                    <i class="fas fa-trash"></i> Resetar Tudo (Fábrica)
                 </button>
             </div>
         </div>
 
         <div id="v-apoie" class="view">
             <div class="card">
-                <h3><i class="fas fa-hand-holding-heart" style="color: #e11d48;"></i> O Chuchuzeiro ajudou sua safra?</h3>
+                <h3 style="margin:0; font-size: 1.1rem;"><i class="fas fa-rocket" style="color: var(--p);"></i> Guia & Instalação</h3>
+                <p style="font-size: 0.85rem; color: #666; margin: 10px 0;">Aprenda a usar todos os recursos e instale o app no seu celular.</p>
                 
-                <div class="info-section">
-                    <p>O <b>Chuchuzeiro</b> foi criado para colocar o controle financeiro da sua roça na palma da mão, garantindo que <b>nenhum centavo do seu suor passe despercebido</b>.</p>
-                    
-                    <h4><i class="fas fa-chart-line"></i> O Fim do Caderno (Lucro Real)</h4>
-                    <p>Chega de contas de cabeça ou anotações perdidas. Saiba exatamente quantas caixas saíram, qual é a sua <b>margem de lucro real</b> e não deixe dinheiro na mesa.</p>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                    <button class="btn-primary" onclick="document.getElementById('tutorial-modal').style.display='flex'">
+                        <i class="fas fa-book"></i> Abrir Manual Rápido
+                    </button>
+                    <button class="btn-install" onclick="document.getElementById('install-modal').style.display='flex'">
+                        <i class="fas fa-mobile-alt"></i> Instalar App (PWA)
+                    </button>
+                </div>
+            </div>
 
-                    <h4><i class="fas fa-wifi-slash"></i> 100% Offline (Feito para o Campo)</h4>
-                    <p>Tá no meio da roça ou na estrada sem sinal? Sem problema. O app funciona perfeitamente sem internet e é super leve para <b>economizar a bateria do seu celular</b> o dia todo.</p>
+            <div class="card">
+                <h4 style="color: var(--p); margin: 0 0 15px; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-gift"></i> Escolha como fortalecer
+                </h4>
+                
+                <div class="tiers-grid">
+                    <div class="tier-card">
+                        <div class="tier-icon">☕</div>
+                        <div class="tier-title">O Café da Firma</div>
+                        <div class="tier-price">R$ 5,00</div>
+                        <div class="tier-description">Ajuda a manter o dev acordado programando!</div>
+                        <img src="qrcode.png" class="tier-qr" onclick="abrirQrCodeZoom(this.src, 'O Café da Firma ☕')" onerror="this.src='https://placehold.co/200x200?text=QR+Code'">
+                        <div class="zoom-hint" onclick="abrirQrCodeZoom(this.previousElementSibling.src, 'O Café da Firma ☕')"><i class="fas fa-search-plus"></i> Ampliar</div>
+                    </div>
 
-                    <h4><i class="fas fa-user-shield"></i> Ninguém Espiona Suas Contas</h4>
-                    <p>Diferente de grandes empresas, <b>nós não temos acesso aos seus dados</b>. Tudo fica trancado e seguro apenas no seu aparelho. O dinheiro é seu, a informação também.</p>
-                    
-                    <div class="privacy-box" style="background: #fff1f2; border-color: #e11d48; color: #9f1239;">
-                        <p><i class="fas fa-ban"></i> <b>Zero Mensalidades. Zero Anúncios.</b><br>
-                        Outros aplicativos agrícolas chegam a cobrar centenas de reais por ano. O Chuchuzeiro é <b>gratuito</b>. Se o app já fez você economizar tempo, organizar a colheita ou não perder dinheiro, considere retribuir!</p>
+                    <div class="tier-card" style="background: rgba(48, 209, 88, 0.08); border-color: var(--income);">
+                        <div class="badge-popular">✨ Popular</div>
+                        <div class="tier-icon">🥪</div>
+                        <div class="tier-title">O Lanche</div>
+                        <div class="tier-price">R$ 15,00</div>
+                        <div class="tier-description">Mais barato que taxa de banco! Retribua o valor.</div>
+                        <img src="qrcode.png" class="tier-qr" onclick="abrirQrCodeZoom(this.src, 'O Lanche 🥪')" onerror="this.src='https://placehold.co/200x200?text=QR+Code'">
+                        <div class="zoom-hint" onclick="abrirQrCodeZoom(this.previousElementSibling.src, 'O Lanche 🥪')"><i class="fas fa-search-plus"></i> Ampliar</div>
+                    </div>
+
+                    <div class="tier-card" style="background: rgba(255, 214, 10, 0.08); border-color: #ffd60a;">
+                        <div class="tier-icon">👑</div>
+                        <div class="tier-title">Patrão do App</div>
+                        <div class="tier-price">R$ 50,00+</div>
+                        <div class="tier-description">Para quem virou fã e quer garantir o app pra sempre.</div>
+                        <img src="qrcode.png" class="tier-qr" onclick="abrirQrCodeZoom(this.src, 'Patrão do App 👑')" onerror="this.src='https://placehold.co/200x200?text=QR+Code'">
+                        <div class="zoom-hint" onclick="abrirQrCodeZoom(this.previousElementSibling.src, 'Patrão do App 👑')"><i class="fas fa-search-plus"></i> Ampliar</div>
                     </div>
                 </div>
 
-                <div style="margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-                    <h4 style="color: var(--p); margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-gift"></i> Escolha como apoiar o projeto
-                    </h4>
-                    <div class="tiers-grid">
-                        
-                        <div class="tier-card">
-                            <div class="tier-icon">☕</div>
-                            <div class="tier-title">O "Cafézinho"</div>
-                            <div class="tier-price">R$ 5,00 a R$ 10,00</div>
-                            <div class="tier-description">
-                                Valor simbólico e rápido! Se o app te ajudou hoje, esse apoio paga o café do desenvolvedor e dá aquele empurrão de motivação para criar novas melhorias.
-                            </div>
-                            <img src="qrcode.png" alt="QR Code PIX - Cafézinho" class="tier-qr" onclick="abrirQrCodeZoom(this.src, 'O Cafézinho ☕')" onerror="this.src='https://placehold.co/200x200?text=QR+Code+PIX'">
-                            <div class="zoom-hint" onclick="abrirQrCodeZoom(this.previousElementSibling.src, 'O Cafézinho ☕')"><i class="fas fa-search-plus"></i> Clique para ampliar</div>
-                        </div>
-
-                        <div class="tier-card" style="background: #f0fdf4; border-color: #bbf7d0;">
-                            <div class="badge-popular">✨ Mais Escolhido</div>
-                            <div class="tier-icon">🚜</div>
-                            <div class="tier-title">O Valor Justo</div>
-                            <div class="tier-price">R$ 15,00 a R$ 25,00</div>
-                            <div class="tier-description">
-                                O preço de <b>uma única mensalidade</b> de outros apps, mas pago uma vez só! Retribua pelas horas economizadas e pelos relatórios profissionais gerados para você.
-                            </div>
-                            <img src="qrcode.png" alt="QR Code PIX - Assinatura" class="tier-qr" onclick="abrirQrCodeZoom(this.src, 'O Valor Justo 🚜')" onerror="this.src='https://placehold.co/200x200?text=QR+Code+PIX'">
-                            <div class="zoom-hint" onclick="abrirQrCodeZoom(this.previousElementSibling.src, 'O Valor Justo 🚜')"><i class="fas fa-search-plus"></i> Clique para ampliar</div>
-                        </div>
-
-                        <div class="tier-card" style="background: #fef9e7; border-color: #fde68a;">
-                            <div class="tier-icon">🏆</div>
-                            <div class="tier-title">Sócio Produtor</div>
-                            <div class="tier-price">R$ 50,00 ou mais</div>
-                            <div class="tier-description">
-                                O app virou a ferramenta central do seu negócio? Apoie como um verdadeiro "sócio". Seu apoio garante que o aplicativo continue existindo, sem taxas ocultas e focado no pequeno produtor.
-                            </div>
-                            <img src="qrcode.png" alt="QR Code PIX - Apoiador Pro" class="tier-qr" onclick="abrirQrCodeZoom(this.src, 'Sócio Produtor 🏆')" onerror="this.src='https://placehold.co/200x200?text=QR+Code+PIX'">
-                            <div class="zoom-hint" onclick="abrirQrCodeZoom(this.previousElementSibling.src, 'Sócio Produtor 🏆')"><i class="fas fa-search-plus"></i> Clique para ampliar</div>
-                        </div>
-                    </div>
-                </div>
-        
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
-                    <button class="btn-tutorial" onclick="openTutorialModal()">
-                        <i class="fas fa-book-reader"></i> Tutorial: Conheça todos os recursos
-                    </button>
-
-                    <button class="btn-mp" onclick="window.open('https://link.mercadopago.com.br/cuecasa', '_blank')">
-                        <i class="fas fa-credit-card"></i> Apoiar via Cartão/MP
-                    </button>
-                    <button class="btn-wpp" onclick="window.open('https://wa.me/5547996057007?text=Quero%20suporte%20do%20app%20chuchuzeiro', '_blank')">
-                        <i class="fab fa-whatsapp"></i> Contato do Desenvolvedor
-                    </button>
-                </div>
-                
-                <div style="text-align: center; margin-top: 20px; color: #9ca3af; font-size: 0.7rem;">
-                    Versão 2.0 • Feito com 🌱 para agricultura familiar<br>
-                    <i class="fas fa-shield-alt"></i> Dados 100% seguros no seu aparelho
+                <div class="app-footer" style="font-size: 0.75rem; color: #888; text-align: center; margin-top: 15px;">
+                    <p>🌾 Feito para a roça: funciona 100% offline, sem sinal e sem nuvem.<br>
+                    <strong>Privacidade Absoluta:</strong> Seus dados são seus e não saem do seu bolso.</p>
                 </div>
             </div>
         </div>
@@ -710,144 +582,65 @@
         <div class="nav-buttons">
             <div class="tab active" onclick="navTo('v-venda',this)"><i class="fas fa-seedling"></i><span>Colheita</span></div>
             <div class="tab" onclick="navTo('v-gasto',this)"><i class="fas fa-tools"></i><span>Despesas</span></div>
-            <div class="tab" onclick="navTo('v-consulta',this)"><i class="fas fa-chart-bar"></i><span>Relatórios</span></div>
+            <div class="tab" onclick="navTo('v-consulta',this)"><i class="fas fa-chart-pie"></i><span>Relatórios</span></div>
             <div class="tab" onclick="navTo('v-apoie',this)"><i class="fas fa-heart"></i><span>Apoie</span></div>
         </div>
     </nav>
 
-    <div id="custom-modal" class="modal-overlay">
-        <div class="modal-box">
-            <span class="modal-icon" id="modal-icon">🤔</span>
-            <div class="modal-title" id="modal-title">Título</div>
-            <div class="modal-desc" id="modal-desc">Descrição</div>
-            <div class="modal-actions">
-                <button class="btn-sec" id="modal-btn-cancel">Cancelar</button>
-                <button class="btn-v" id="modal-btn-confirm">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
     <div id="toast">Notificação</div>
 
+    <script id="offline-data" type="application/json"></script>
+
     <script>
-        // -------------------- PREVENÇÃO DE MULTIPLAS ABAS (BroadcastChannel) --------------------
+        // --- 1. GESTÃO DE CONCORRÊNCIA (BroadcastChannel) ---
         const channel = new BroadcastChannel('chuchuzeiro_auth');
-        channel.postMessage('ping');
+        channel.postMessage('check_alive');
+        
         channel.onmessage = (event) => {
-            if (event.data === 'ping') channel.postMessage('pong');
-            else if (event.data === 'pong') {
-                document.body.innerHTML = '<div style="display:flex;height:100vh;align-items:center;justify-content:center;"><h1>⚠️ App já aberto</h1></div>';
-                window.stop();
+            // Se outra aba responder que está viva, esta aqui se fecha ou alerta
+            if (event.data === 'i_am_alive') {
+                document.body.innerHTML = `
+                    <div style="display:flex; flex-direction:column; height:100vh; align-items:center; justify-content:center; text-align:center; padding:20px;">
+                        <h1 style="color:#c62828">⚠️ App já aberto</h1>
+                        <p>Para evitar erros no banco de dados, use apenas uma aba.</p>
+                        <button onclick="window.close()" style="width:auto; background:#333; color:white; padding:10px 20px; border-radius:8px;">Fechar esta aba</button>
+                    </div>`;
+                // Tenta fechar conexão DB se existir
+                if(db) db.close();
+                throw new Error("Multi-tab detected");
+            } else if (event.data === 'check_alive') {
+                channel.postMessage('i_am_alive');
             }
         };
 
-        // -------------------- VAR GLOBAIS --------------------
+        // --- VARIÁVEIS GLOBAIS ---
         let db;
         let chartInstance;
-        const DB_NAME = "ChuchuProDB_v2";
+        const DB_NAME = "ChuchuDB_V3";
         const DB_VERSION = 1;
         const FORMAT_BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-        const BACKUP_KEY = "chuchu_last_backup_date";
-        const AUTO_BACKUP_KEY = "chuchu_auto_mirror";
         let pendingAction = null;
 
-        // -------------------- DETECÇÃO DE TECLADO (UX/UI FIX) --------------------
-        function setupKeyboardHelpers() {
-            const inputs = document.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                input.addEventListener('focus', (e) => {
-                    document.body.classList.add('keyboard-open');
-                    setTimeout(() => {
-                        e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
-                });
-                input.addEventListener('blur', () => {
-                    setTimeout(() => {
-                        const active = document.activeElement;
-                        const isInput = active.tagName === 'INPUT' || active.tagName === 'SELECT' || active.tagName === 'TEXTAREA';
-                        if (!isInput) {
-                            document.body.classList.remove('keyboard-open');
-                        }
-                    }, 100);
-                });
-            });
-        }
-
-        // -------------------- UTILITÁRIOS --------------------
-        function removerAcentos(str) {
-            if (!str) return "";
-            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-        }
-        function getUserName() {
-            return localStorage.getItem('chuchuzeiro_user_name') || "Produtor";
-        }
-        function getSafeFileName() {
-            return getUserName().replace(/[^a-z0-9]/gi, '_');
-        }
-
-        // -------------------- MODAIS (boas vindas, tutorial, pix) --------------------
-        function checkUser() {
-            const user = localStorage.getItem('chuchuzeiro_user_name');
-            if (!user) {
-                document.getElementById('welcome-modal').style.display = 'flex';
-            } else {
-                updateUserUI(user);
-            }
-        }
-        function salvarUsuario() {
-            const name = document.getElementById('user-name-input').value.trim();
-            if (!name) return alert("Por favor, digite um nome.");
-            localStorage.setItem('chuchuzeiro_user_name', name);
-            document.getElementById('welcome-modal').style.display = 'none';
-            updateUserUI(name);
-            showToast(`Bem-vindo, ${name}!`, 'success');
-        }
-        function updateUserUI(name) {
-            const el = document.getElementById('user-greeting');
-            el.innerText = `🌱 Olá, ${name}`;
-            el.style.display = 'block';
-        }
-
-        function openTutorialModal() { document.getElementById('tutorial-modal').style.display = 'flex'; }
-        function closeTutorialModal() { document.getElementById('tutorial-modal').style.display = 'none'; }
-        
-        // FUNÇÕES DO NOVO MODAL DE QR CODE
-        function abrirQrCodeZoom(imageSrc, titulo) {
-            document.getElementById('modal-qr-img').src = imageSrc;
-            document.getElementById('modal-qr-title').innerText = titulo;
-            document.getElementById('pix-modal').style.display = 'flex';
-        }
-        function closePixModal() { document.getElementById('pix-modal').style.display = 'none'; }
-
-        // -------------------- TOAST --------------------
-        function showToast(msg, type = 'success') {
+        // --- HELPERS UI ---
+        function showToast(msg, type='success') {
             const t = document.getElementById("toast");
-            t.innerHTML = (type === 'success' ? '✅ ' : '⚠️ ') + msg;
+            t.innerText = (type==='error' ? '❌ ' : '✅ ') + msg;
             t.style.opacity = 1;
             setTimeout(() => t.style.opacity = 0, 3000);
         }
 
-        // -------------------- CONFIRMAÇÃO MODAL --------------------
-        function confirmAction(title, desc, action, icon = '⚠️', confirmColor = null) {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-desc').innerText = desc;
-            document.getElementById('modal-icon').innerText = icon;
-            const btn = document.getElementById('modal-btn-confirm');
-            btn.style.background = confirmColor || 'var(--p)';
-            pendingAction = action;
-            document.getElementById('custom-modal').classList.add('open');
+        function getUserName() { return localStorage.getItem('user_name'); }
+        
+        function updateUserUI() {
+            const name = getUserName();
+            const el = document.getElementById('header-title');
+            if(name) {
+                el.innerHTML = `<i class="fas fa-user-circle"></i> ${name}`;
+                document.getElementById('user-greeting').innerText = "Gestão Financeira";
+            }
         }
-        function closeModal() {
-            document.getElementById('custom-modal').classList.remove('open');
-            pendingAction = null;
-        }
-        document.getElementById('modal-btn-cancel').onclick = closeModal;
-        document.getElementById('modal-btn-confirm').onclick = () => {
-            if(pendingAction) pendingAction();
-            closeModal();
-        };
 
-        // -------------------- INDEXED DB --------------------
+        // --- CORE DATABASE (IndexedDB) ---
         function initDB() {
             const request = indexedDB.open(DB_NAME, DB_VERSION);
             request.onupgradeneeded = e => {
@@ -855,527 +648,440 @@
                 if(!db.objectStoreNames.contains("vendas")) db.createObjectStore("vendas", { keyPath: "id", autoIncrement: true });
                 if(!db.objectStoreNames.contains("gastos")) db.createObjectStore("gastos", { keyPath: "id", autoIncrement: true });
             };
-            request.onsuccess = e => { 
-                db = e.target.result; 
+            request.onsuccess = e => {
+                db = e.target.result;
+                // Verificar Auto-Restauração (Offline HTML)
+                checkOfflineRestore();
                 popularFiltroMeses();
                 render();
-                verificarBackupSemanal();
             };
+            request.onerror = () => showToast("Erro ao abrir Banco de Dados", "error");
         }
 
-        function transaction(storeName, mode) { return db.transaction(storeName, mode).objectStore(storeName); }
-        function getAll(storeName) {
-            return new Promise(resolve => {
-                if(!db) return resolve([]);
-                const req = transaction(storeName, "readonly").getAll();
+        function transaction(store, mode) { return db.transaction(store, mode).objectStore(store); }
+        
+        function getAll(store) {
+            return new Promise((resolve, reject) => {
+                const req = transaction(store, "readonly").getAll();
                 req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
             });
         }
 
-        // -------------------- DATAS --------------------
-        function setTodayDate() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('dv').value = today;
-            document.getElementById('dg').value = today;
-        }
-        function isDataFutura(dateString) {
-            const inputDate = new Date(dateString + 'T00:00:00');
-            const today = new Date(); today.setHours(0,0,0,0);
-            return inputDate > today;
+        // --- BACKUP OFFLINE (HTML INJECTION) ---
+        async function baixarAppOffline() {
+            showToast("Verificando dados...", "success");
+            
+            try {
+                // 1. Extrair Dados Atuais
+                const vendas = await getAll("vendas");
+                const gastos = await getAll("gastos");
+                
+                if(!vendas && !gastos) throw new Error("Erro na leitura");
+
+                const payload = JSON.stringify({ vendas, gastos, user: getUserName(), date: new Date().toISOString() });
+                
+                // 2. Clonar o HTML atual
+                const clone = document.documentElement.cloneNode(true);
+                
+                // 3. Injetar Payload no Script Tag
+                const scriptTag = clone.querySelector('#offline-data');
+                scriptTag.textContent = payload;
+                
+                // 4. Gerar Blob
+                const blob = new Blob([clone.outerHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Chuchuzeiro_OFFLINE_${new Date().toISOString().slice(0,10)}.html`;
+                a.click();
+                
+                showToast("App Completo baixado!");
+            } catch (e) {
+                console.error(e);
+                showToast("Erro ao gerar backup HTML", "error");
+            }
         }
 
-        // -------------------- CRUD VENDAS --------------------
+        function checkOfflineRestore() {
+            // VERIFICAR HARD RESET: Se o usuário resetou o app recentemente, ignora os dados embutidos
+            if (localStorage.getItem('ignore_embed') === 'true') {
+                console.log("Ignorando dados embutidos devido ao Hard Reset.");
+                return;
+            }
+
+            const scriptTag = document.getElementById('offline-data');
+            if (scriptTag && scriptTag.textContent.trim().length > 0) {
+                try {
+                    const data = JSON.parse(scriptTag.textContent);
+                    console.log("Versão Offline Detectada. Restaurando...");
+                    
+                    // Restaurar Usuário
+                    if(data.user) localStorage.setItem('user_name', data.user);
+                    updateUserUI();
+
+                    // Restaurar DB se estiver vazio ou mesclar (estratégia simples: limpar e por o backup)
+                    // Para evitar duplicatas na versão offline, vamos limpar e reinserir
+                    const tx = db.transaction(["vendas", "gastos"], "readwrite");
+                    
+                    // Limpar atual (já que abriu o arquivo de backup, assume-se que quer ver o backup)
+                    tx.objectStore("vendas").clear();
+                    tx.objectStore("gastos").clear();
+                    
+                    data.vendas.forEach(i => tx.objectStore("vendas").put(i));
+                    data.gastos.forEach(i => tx.objectStore("gastos").put(i));
+                    
+                    showToast("Dados restaurados do arquivo!", "success");
+                    
+                    // Limpar a tag para não re-importar se der refresh (opcional, mas seguro manter)
+                    // scriptTag.textContent = ""; 
+                } catch (e) {
+                    console.error("Falha na auto-restauração", e);
+                }
+            }
+        }
+
+        // --- BACKUP JSON VERIFICADO ---
+        async function exportarJsonVerify() {
+            try {
+                const vendas = await getAll("vendas");
+                const gastos = await getAll("gastos");
+                // Simples verificação
+                if(!Array.isArray(vendas) || !Array.isArray(gastos)) throw new Error("Estrutura inválida");
+                
+                const blob = new Blob([JSON.stringify({vendas, gastos})], {type: "application/json"});
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = `Backup_JSON_${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+                showToast("Backup JSON verificado e salvo!");
+            } catch(e) { showToast("Erro nos dados. Contate suporte.", "error"); }
+        }
+
+        function importarJsonVerify(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = f => {
+                try {
+                    const d = JSON.parse(f.target.result);
+                    if(!d.vendas || !d.gastos) throw new Error("JSON Inválido");
+                    
+                    confirmAction("Restaurar JSON", "Verificamos o arquivo e parece ok. Substituir dados?", () => {
+                        const tx = db.transaction(["vendas", "gastos"], "readwrite");
+                        d.vendas.forEach(i => { delete i.id; tx.objectStore("vendas").put(i); });
+                        d.gastos.forEach(i => { delete i.id; tx.objectStore("gastos").put(i); });
+                        tx.oncomplete = () => { showToast("Restaurado!"); render(); };
+                    }, '📥');
+                } catch(err) { showToast("Arquivo corrompido ou inválido", "error"); }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- FUNÇÕES DE CRUD (Simplificadas) ---
         function salvarVenda() {
-            const id = document.getElementById('venda-id').value;
             const q = parseFloat(document.getElementById('q').value);
             const p = parseFloat(document.getElementById('p').value);
             const dt = document.getElementById('dv').value;
-            if(!q || !p || !dt) return showToast("Preencha todos os campos", "error");
-            if(isDataFutura(dt)) return showToast("Data futura não permitida", "error");
-            const item = { q, p, dt, t: (q * p) };
+            const id = document.getElementById('venda-id').value;
+            
+            if(!q || !p || !dt) return showToast("Preencha tudo", "error");
+            
+            const item = { q, p, dt, t: q*p };
             if(id) item.id = parseInt(id);
+            
             transaction("vendas", "readwrite").put(item).onsuccess = () => {
-                showToast(id ? "Venda atualizada" : "Venda registrada", "success");
-                espelharDadosAutomatico();
+                showToast("Salvo!");
                 resetForm('vendas');
                 render();
             };
         }
 
         function salvarGasto() {
-            const id = document.getElementById('gasto-id').value;
             const d = document.getElementById('d').value;
             const v = parseFloat(document.getElementById('v').value);
             const dt = document.getElementById('dg').value;
-            if(!d || !v || !dt) return showToast("Preencha todos os campos", "error");
-            if(isDataFutura(dt)) return showToast("Data futura não permitida", "error");
+            const id = document.getElementById('gasto-id').value;
+            
+            if(!d || !v || !dt) return showToast("Preencha tudo", "error");
+            
             const item = { d, v, dt };
             if(id) item.id = parseInt(id);
+            
             transaction("gastos", "readwrite").put(item).onsuccess = () => {
-                showToast(id ? "Gasto atualizado" : "Gasto registrado", "success");
-                espelharDadosAutomatico();
+                showToast("Salvo!");
                 resetForm('gastos');
                 render();
             };
         }
 
-        // -------------------- RESET E CANCEL --------------------
         function resetForm(type) {
-            setTodayDate();
+            const hoje = new Date().toISOString().split('T')[0];
             if(type === 'vendas') {
                 document.getElementById('venda-id').value = "";
                 document.getElementById('q').value = "";
                 document.getElementById('p').value = "";
-                document.getElementById('titulo-venda').innerHTML = '<i class="fas fa-seedling" style="color: var(--p);"></i> Registrar Colheita';
-                const btn = document.getElementById('btn-acao-venda');
-                btn.innerHTML = '<i class="fas fa-check"></i> Confirmar Venda';
-                btn.className = "btn-income";
-                document.getElementById('btn-cancel-venda').style.display = 'none';
+                document.getElementById('dv').value = hoje;
+                document.getElementById('btn-acao-venda').innerText = "Confirmar Venda";
+                document.getElementById('btn-acao-venda').className = "btn-income";
+                document.getElementById('btn-cancel-venda').style.display = "none";
             } else {
                 document.getElementById('gasto-id').value = "";
                 document.getElementById('d').value = "";
                 document.getElementById('v').value = "";
-                document.getElementById('titulo-gasto').innerHTML = '<i class="fas fa-tools" style="color: var(--expense);"></i> Registrar Despesa';
-                const btn = document.getElementById('btn-acao-gasto');
-                btn.innerHTML = '<i class="fas fa-money-bill-wave"></i> Registrar Gasto';
-                btn.className = "btn-expense";
-                document.getElementById('btn-cancel-gasto').style.display = 'none';
+                document.getElementById('dg').value = hoje;
+                document.getElementById('btn-acao-gasto').innerText = "Registrar Gasto";
+                document.getElementById('btn-acao-gasto').className = "btn-expense";
+                document.getElementById('btn-cancel-gasto').style.display = "none";
             }
         }
 
-        function cancelarEdicao(type) { resetForm(type); }
-
-        // -------------------- EDIÇÃO --------------------
         function editarItem(type, id) {
-            transaction(type, "readonly").get(id).onsuccess = (e) => {
-                const data = e.target.result;
-                if (type === 'vendas') {
-                    document.getElementById('venda-id').value = data.id;
-                    document.getElementById('q').value = data.q;
-                    document.getElementById('p').value = data.p;
-                    document.getElementById('dv').value = data.dt;
-                    document.getElementById('titulo-venda').innerHTML = '<i class="fas fa-edit"></i> Editando Venda';
-                    const btn = document.getElementById('btn-acao-venda');
-                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> Salvar Alterações';
-                    btn.className = "btn-update";
-                    document.getElementById('btn-cancel-venda').style.display = 'block';
+            transaction(type, "readonly").get(id).onsuccess = e => {
+                const d = e.target.result;
+                if(type === 'vendas') {
                     navTo('v-venda', document.querySelectorAll('.tab')[0]);
+                    document.getElementById('venda-id').value = d.id;
+                    document.getElementById('q').value = d.q;
+                    document.getElementById('p').value = d.p;
+                    document.getElementById('dv').value = d.dt;
+                    document.getElementById('btn-acao-venda').innerText = "Salvar Alteração";
+                    document.getElementById('btn-acao-venda').className = "btn-update";
+                    document.getElementById('btn-cancel-venda').style.display = "block";
                 } else {
-                    document.getElementById('gasto-id').value = data.id;
-                    document.getElementById('d').value = data.d;
-                    document.getElementById('v').value = data.v;
-                    document.getElementById('dg').value = data.dt;
-                    document.getElementById('titulo-gasto').innerHTML = '<i class="fas fa-edit"></i> Editando Gasto';
-                    const btn = document.getElementById('btn-acao-gasto');
-                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> Salvar Alterações';
-                    btn.className = "btn-update";
-                    document.getElementById('btn-cancel-gasto').style.display = 'block';
                     navTo('v-gasto', document.querySelectorAll('.tab')[1]);
+                    document.getElementById('gasto-id').value = d.id;
+                    document.getElementById('d').value = d.d;
+                    document.getElementById('v').value = d.v;
+                    document.getElementById('dg').value = d.dt;
+                    document.getElementById('btn-acao-gasto').innerText = "Salvar Alteração";
+                    document.getElementById('btn-acao-gasto').className = "btn-update";
+                    document.getElementById('btn-cancel-gasto').style.display = "block";
                 }
             };
         }
 
-        function apagarItem(type, id) {
-            transaction(type, "readwrite").delete(id).onsuccess = () => {
-                showToast("Item removido", "success");
-                espelharDadosAutomatico();
-                render();
-            };
-        }
-
-        // -------------------- RENDERIZAÇÃO --------------------
+        // --- RENDERIZAÇÃO ---
         async function render() {
-            if (!db) return;
-            if (document.getElementById('filtroMes').options.length === 0) await popularFiltroMeses();
-            
-            const filtro = document.getElementById('filtroMes').value; // YYYY-MM
-            const anoAtual = filtro.split('-')[0];
-
+            if(!db) return;
+            const filtro = document.getElementById('filtroMes').value;
             const allV = await getAll("vendas");
             const allG = await getAll("gastos");
-
+            
+            // Filtros
             const v = allV.filter(i => i.dt.startsWith(filtro));
             const g = allG.filter(i => i.dt.startsWith(filtro));
-
-            const tCx = v.reduce((sum, i) => sum + i.q, 0);
-            const tV = v.reduce((sum, i) => sum + i.t, 0);
-            const tG = g.reduce((sum, i) => sum + i.v, 0);
+            
+            // Totais Mês
+            const tV = v.reduce((s,i)=>s+i.t,0);
+            const tG = g.reduce((s,i)=>s+i.v,0);
+            const cx = v.reduce((s,i)=>s+i.q,0);
             const saldo = tV - tG;
-            const margin = tV > 0 ? ((saldo / tV) * 100).toFixed(0) : 0;
-
-            document.getElementById('dash-cx').innerText = tCx;
+            const margem = tV > 0 ? ((saldo/tV)*100).toFixed(0) : 0;
+            
+            document.getElementById('dash-cx').innerText = cx;
             document.getElementById('dash-rs').innerText = FORMAT_BRL.format(saldo);
-            document.getElementById('dash-rs').style.color = saldo >= 0 ? '#1b5e20' : '#c62828';
-            document.getElementById('dash-margin').innerText = margin + "%";
-            document.getElementById('dash-margin').style.color = margin > 0 ? 'var(--p)' : (margin < 0 ? 'var(--expense)' : '#666');
+            document.getElementById('dash-rs').style.color = saldo >= 0 ? 'var(--income)' : 'var(--expense)';
+            document.getElementById('dash-margin').innerText = margem + "%";
             document.getElementById('dash-in').innerText = FORMAT_BRL.format(tV);
             document.getElementById('dash-out').innerText = FORMAT_BRL.format(tG);
 
-            // SAFRA
-            const vSafra = allV.filter(i => i.dt.startsWith(anoAtual));
-            const gSafra = allG.filter(i => i.dt.startsWith(anoAtual));
-
-            const totalVSafra = vSafra.reduce((sum, i) => sum + i.t, 0);
-            const totalGSafra = gSafra.reduce((sum, i) => sum + i.v, 0);
-            const saldoSafra = totalVSafra - totalGSafra;
-
-            document.getElementById('lbl-ano-safra').innerText = anoAtual;
-            document.getElementById('safra-total-venda').innerText = FORMAT_BRL.format(totalVSafra);
-            document.getElementById('safra-total-gasto').innerText = FORMAT_BRL.format(totalGSafra);
-            
-            const elSaldoSafra = document.getElementById('safra-saldo-final');
-            elSaldoSafra.innerText = FORMAT_BRL.format(saldoSafra);
-            elSaldoSafra.style.color = saldoSafra >= 0 ? '#1b5e20' : '#c62828';
+            // Safra
+            const ano = filtro.split('-')[0];
+            const tVSafra = allV.filter(i=>i.dt.startsWith(ano)).reduce((s,i)=>s+i.t,0);
+            const tGSafra = allG.filter(i=>i.dt.startsWith(ano)).reduce((s,i)=>s+i.v,0);
+            document.getElementById('lbl-ano-safra').innerText = ano;
+            document.getElementById('safra-saldo-final').innerText = FORMAT_BRL.format(tVSafra - tGSafra);
 
             // Lista
             const lista = document.getElementById('lista-detalhada');
-            lista.innerHTML = '';
-            const combined = [
-                ...v.map(i => ({...i, type: 'vendas'})),
-                ...g.map(i => ({...i, type: 'gastos'}))
-            ].sort((a,b) => new Date(b.dt) - new Date(a.dt) || b.id - a.id);
-
-            if (combined.length === 0) {
-                lista.innerHTML = '<div class="empty-state" style="text-align:center; padding:20px; color:#9ca3af;">📭 Nenhum registro neste mês.</div>';
-            } else {
-                combined.forEach(item => {
-                    const el = criarElementoLista(item);
-                    lista.appendChild(el);
-                });
-            }
-            atualizarGrafico(v, g);
-        }
-
-        function criarElementoLista(item) {
-            const isV = item.type === 'vendas';
-            const val = isV ? item.t : item.v;
-            const dia = item.dt.split('-')[2];
-            const mesAbrev = new Date(item.dt).toLocaleString('pt-BR', {month:'short'}).replace('.','');
+            lista.innerHTML = "";
+            const items = [...v.map(i=>({...i, type:'vendas'})), ...g.map(i=>({...i, type:'gastos'}))]
+                         .sort((a,b) => new Date(b.dt) - new Date(a.dt));
             
-            const div = document.createElement('div');
-            div.className = 'item';
-            div.innerHTML = `
-                <div class="item-date-box">
-                    <span>${mesAbrev}</span>
-                    <strong>${dia}</strong>
-                </div>
-                <div class="item-desc">
-                    <b>${isV ? item.q + ' Caixas' : item.d}</b>
-                    <small>${isV ? FORMAT_BRL.format(item.p) + '/un' : 'Despesa'}</small>
-                </div>
-                <div class="item-value">
-                    <b style="color:${isV?'var(--income)':'var(--expense)'}">${isV?'+':'-'} ${FORMAT_BRL.format(val)}</b>
-                    <div class="actions" style="margin-top:6px; display:flex; gap:8px; justify-content:flex-end;">
-                        <span class="btn-mini edit" style="background:#e0f2fe; color:#0284c7; padding:4px 10px; border-radius:6px; font-size:0.7rem; font-weight:600; cursor:pointer;"><i class="fas fa-pen"></i> Editar</span>
-                        <span class="btn-mini del" style="background:#fee2e2; color:#dc2626; padding:4px 10px; border-radius:6px; font-size:0.7rem; font-weight:600; cursor:pointer;"><i class="fas fa-trash"></i> Excluir</span>
+            if(items.length === 0) lista.innerHTML = "<div style='text-align:center; padding:20px; color:#aaa'>Sem registros.</div>";
+            
+            items.forEach(i => {
+                const el = document.createElement('div');
+                el.className = 'item';
+                const isV = i.type === 'vendas';
+                const [y,m,d] = i.dt.split('-');
+                el.innerHTML = `
+                    <div class="item-date-box"><strong>${d}</strong></div>
+                    <div class="item-desc">
+                        <b>${isV ? i.q + ' Cx' : i.d}</b>
+                        <span style="font-size:0.75rem; color:#666">${isV ? FORMAT_BRL.format(i.p) : 'Despesa'}</span>
                     </div>
-                </div>
-            `;
-            div.querySelector('.edit').onclick = (e) => { e.stopPropagation(); editarItem(item.type, item.id); };
-            div.querySelector('.del').onclick = (e) => { e.stopPropagation(); confirmAction("Apagar Item", "Deseja remover este registro?", () => apagarItem(item.type, item.id), '🗑️', '#ef4444'); };
-            return div;
+                    <div style="text-align:right">
+                        <b style="color:${isV ? 'var(--income)':'var(--expense)'}">${isV?'+':'-'} ${FORMAT_BRL.format(isV?i.t:i.v)}</b>
+                        <div style="margin-top:4px">
+                            <i class="fas fa-pen" style="color:#0284c7; margin-right:8px; cursor:pointer;" onclick="editarItem('${i.type}', ${i.id})"></i>
+                            <i class="fas fa-trash" style="color:#ef4444; cursor:pointer;" onclick="confirmAction('Apagar', 'Apagar este item?', ()=>apagarItem('${i.type}', ${i.id}))"></i>
+                        </div>
+                    </div>
+                `;
+                lista.appendChild(el);
+            });
+            
+            renderChart(v);
         }
 
-        // -------------------- GRÁFICO DE LINHA --------------------
-        function atualizarGrafico(vendas, gastos) {
+        function apagarItem(type, id) {
+            transaction(type, "readwrite").delete(id).onsuccess = () => { showToast("Apagado"); render(); };
+        }
+
+        function renderChart(vendas) {
             const ctx = document.getElementById('graficoLinha').getContext('2d');
             if(chartInstance) chartInstance.destroy();
             
             const map = {};
-            vendas.forEach(i => { const d = parseInt(i.dt.split('-')[2]); map[d] = (map[d] || 0) + i.q; });
-            const labels = Object.keys(map).map(Number).sort((a,b)=>a-b);
+            vendas.forEach(v => { const d = parseInt(v.dt.split('-')[2]); map[d] = (map[d]||0) + v.q; });
+            const labels = Object.keys(map).sort((a,b)=>a-b);
             
-            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(27, 94, 32, 0.2)');
-            gradient.addColorStop(1, 'rgba(27, 94, 32, 0.0)');
-
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels,
                     datasets: [{
                         label: 'Caixas',
-                        data: labels.map(d=>map[d]),
-                        borderColor: '#1b5e20',
-                        backgroundColor: gradient,
-                        borderWidth: 2,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#1b5e20',
-                        pointRadius: 4,
+                        data: labels.map(l=>map[l]),
+                        borderColor: '#2e7d32',
+                        backgroundColor: 'rgba(46, 125, 50, 0.1)',
                         fill: true,
-                        tension: 0.3
+                        tension: 0.4
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-                    scales: { y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { font: {size: 10} } }, x: { grid: { display: false }, ticks: { font: {size: 10} } } },
-                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
-                }
+                options: { maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}} }
             });
         }
 
-        // -------------------- FILTRO MÊS --------------------
         async function popularFiltroMeses() {
-            const vendas = await getAll("vendas");
-            const gastos = await getAll("gastos");
-            const todos = [...vendas, ...gastos];
-            const meses = [...new Set(todos.map(i => i.dt.slice(0, 7)))].sort().reverse();
-            
             const select = document.getElementById('filtroMes');
-            const valorAtual = select.value;
+            const atual = select.value;
             select.innerHTML = "";
-
-            if(meses.length === 0) { meses.push(new Date().toISOString().slice(0,7)); }
-
-            meses.forEach(mes => {
-                const [ano, m] = mes.split('-');
-                const nomeMes = new Date(ano, m - 1).toLocaleString('pt-BR', { month: 'long' });
+            const mesAtual = new Date().toISOString().slice(0,7);
+            
+            // Gera ultimos 12 meses
+            for(let i=0; i<12; i++) {
+                const d = new Date();
+                d.setMonth(d.getMonth() - i);
+                const val = d.toISOString().slice(0,7);
+                const nome = d.toLocaleString('pt-BR', {month:'long', year:'numeric'});
                 const opt = document.createElement('option');
-                opt.value = mes;
-                opt.text = `${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)} ${ano}`;
+                opt.value = val;
+                opt.innerText = nome.charAt(0).toUpperCase() + nome.slice(1);
                 select.appendChild(opt);
-            });
-
-            if(meses.includes(valorAtual)) select.value = valorAtual;
-        }
-
-        // -------------------- BACKUP AUTOMÁTICO E ALERTA --------------------
-        async function espelharDadosAutomatico() {
-            try {
-                const v = await getAll("vendas");
-                const g = await getAll("gastos");
-                localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify({vendas: v, gastos: g}));
-            } catch (e) { console.error("Erro backup auto", e); }
-        }
-
-        function verificarBackupSemanal() {
-            const lastBackup = localStorage.getItem(BACKUP_KEY);
-            if (lastBackup) {
-                const diffDays = Math.ceil(Math.abs(new Date() - new Date(lastBackup)) / (86400000)); 
-                if (diffDays >= 7) document.getElementById('backup-alert').style.display = 'flex';
-            } else {
-                getAll("vendas").then(v => { if (v.length > 0) document.getElementById('backup-alert').style.display = 'flex'; });
             }
+            if(atual) select.value = atual;
         }
 
-        // -------------------- PDF PROFISSIONAL (MÊS OU SAFRA) --------------------
+        // --- SISTEMA ---
+        function limparBancoDados() {
+            db.close();
+            const req = indexedDB.deleteDatabase(DB_NAME);
+            req.onsuccess = () => {
+                localStorage.clear();
+                // Flag para ignorar embed no próximo load (Hard Reset)
+                localStorage.setItem('ignore_embed', 'true');
+                alert("App resetado! O sistema iniciará do zero.");
+                location.reload();
+            };
+        }
+
+        function salvarUsuario() {
+            const nome = document.getElementById('user-name-input').value;
+            if(!nome) return;
+            localStorage.setItem('user_name', nome);
+            document.getElementById('welcome-modal').style.display = 'none';
+            updateUserUI();
+        }
+
+        function navTo(view, el) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(view).classList.add('active');
+            el.classList.add('active');
+            if(view === 'v-consulta') render();
+        }
+
+        // --- CONFIRMAÇÃO ---
+        function confirmAction(title, desc, action, icon='⚠️', color=null) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-icon').innerText = icon;
+            const btn = document.getElementById('modal-btn-confirm');
+            if(color) btn.style.background = color;
+            
+            pendingAction = action;
+            document.getElementById('custom-modal').style.display = 'flex';
+        }
+        document.getElementById('modal-btn-cancel').onclick = () => document.getElementById('custom-modal').style.display = 'none';
+        document.getElementById('modal-btn-confirm').onclick = () => {
+            if(pendingAction) pendingAction();
+            document.getElementById('custom-modal').style.display = 'none';
+        };
+
+        function abrirQrCodeZoom(src, title) {
+            document.getElementById('modal-qr-img').src = src;
+            document.getElementById('modal-qr-title').innerText = title;
+            document.getElementById('pix-modal').style.display = 'flex';
+        }
+        function closePixModal() { document.getElementById('pix-modal').style.display = 'none'; }
+        
+        // --- PDF (Mantido Simples) ---
         async function gerarPDF(tipo) {
             showToast("Gerando PDF...");
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
+            doc.text(`Relatório Chuchuzeiro - ${getUserName() || ''}`, 10, 10);
+            doc.text(`Gerado em: ${new Date().toLocaleDateString()}`, 10, 20);
             
-            const filtroRaw = document.getElementById('filtroMes').value; // ex: 2026-03
-            const [anoF, mesF] = filtroRaw.split('-');
-            
-            let filtroFinal;
-            let tituloRelatorio;
-
-            if(tipo === 'ano') {
-                filtroFinal = anoF; // Filtra tudo que começa com o Ano
-                tituloRelatorio = `SAFRA COMPLETA • ${anoF}`;
-            } else {
-                filtroFinal = filtroRaw; // Filtra tudo que começa com Ano-Mes
-                const nomeMes = new Date(anoF, mesF - 1).toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-                tituloRelatorio = `${nomeMes}/${anoF}`;
-            }
-            
-            const allV = await getAll("vendas");
-            const allG = await getAll("gastos");
-            
-            const v = allV.filter(i => i.dt.startsWith(filtroFinal));
-            const g = allG.filter(i => i.dt.startsWith(filtroFinal));
-            
-            const totalV = v.reduce((s, i) => s + i.t, 0);
-            const totalG = g.reduce((s, i) => s + i.v, 0);
-            const saldo = totalV - totalG;
-            const totalCx = v.reduce((s, i) => s + i.q, 0);
-
-            // Cabeçalho verde
-            doc.setFillColor(27, 94, 32); 
-            doc.rect(0, 0, doc.internal.pageSize.getWidth(), 45, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(24);
-            doc.setFont("helvetica", 'bold');
-            doc.text("CHUCHUZEIRO", doc.internal.pageSize.getWidth()/2, 20, { align: 'center' });
-            doc.setFontSize(12);
-            doc.setFont("helvetica", 'normal');
-            doc.text(`${removerAcentos(getUserName())} • ${tituloRelatorio}`, doc.internal.pageSize.getWidth()/2, 35, { align: 'center' });
-            
-            let yPos = 55;
-            doc.setFillColor(232, 245, 233); doc.rect(14, yPos, 55, 25, 'F');
-            doc.setTextColor(27, 94, 32); doc.setFontSize(10); doc.text("ENTRADAS", 18, yPos+8);
-            doc.setFontSize(12); doc.text(FORMAT_BRL.format(totalV), 18, yPos+18);
-            
-            doc.setFillColor(255, 235, 238); doc.rect(77, yPos, 55, 25, 'F');
-            doc.setTextColor(198, 40, 40); doc.setFontSize(10); doc.text("SAÍDAS", 81, yPos+8);
-            doc.setFontSize(12); doc.text(FORMAT_BRL.format(totalG), 81, yPos+18);
-            
-            doc.setFillColor(243, 244, 246); doc.rect(140, yPos, 55, 25, 'F');
-            doc.setTextColor(31, 41, 55); doc.setFontSize(10); doc.text("SALDO LÍQUIDO", 144, yPos+8);
-            doc.setFontSize(12); doc.text(FORMAT_BRL.format(saldo), 144, yPos+18);
-
-            doc.setTextColor(100); doc.setFontSize(9);
-            doc.text(`Total de Caixas: ${totalCx}`, 14, yPos + 30);
-            doc.text(`Margem de Lucro: ${totalV > 0 ? ((saldo/totalV)*100).toFixed(0) : 0}%`, 14, yPos + 35);
-
-            let nextY = yPos + 38;
-
-            // Se for MÊS, mostra contexto da safra
-            if(tipo === 'mes') {
-                const vSafra = allV.filter(i => i.dt.startsWith(anoF));
-                const gSafra = allG.filter(i => i.dt.startsWith(anoF));
-                const totalVSafra = vSafra.reduce((s, i) => s + i.t, 0);
-                const totalGSafra = gSafra.reduce((s, i) => s + i.v, 0);
-                const saldoSafra = totalVSafra - totalGSafra;
-
-                doc.setDrawColor(200); 
-                doc.setFillColor(248, 250, 252);
-                doc.roundedRect(14, nextY, 181, 20, 3, 3, 'FD');
-
-                doc.setFontSize(9);
-                doc.setTextColor(100);
-                doc.text(`CONTEXTO: SAFRA ${anoF} ACUMULADA`, 18, nextY + 6);
-
-                doc.setFontSize(10);
-                doc.setTextColor(0); 
-                doc.text(`Receita: ${FORMAT_BRL.format(totalVSafra)}`, 18, nextY + 14);
-                doc.text(`Despesas: ${FORMAT_BRL.format(totalGSafra)}`, 70, nextY + 14);
-
-                if(saldoSafra >= 0) doc.setTextColor(27, 94, 32); else doc.setTextColor(198, 40, 40);
-                doc.setFont("helvetica", "bold");
-                doc.text(`Resultado Safra: ${FORMAT_BRL.format(saldoSafra)}`, 120, nextY + 14);
-                doc.setFont("helvetica", "normal");
-                
-                nextY += 25;
-            }
-
-            const tableBody = [
-                ...v.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), `${i.q} Caixas`, `R$ ${i.p.toFixed(2)}`, `+ ${FORMAT_BRL.format(i.t)}`]),
-                ...g.map(i => [new Date(i.dt).toLocaleDateString('pt-BR'), i.d, '-', `- ${FORMAT_BRL.format(i.v)}`])
-            ].sort((a,b) => b[0].split('/').reverse().join('-').localeCompare(a[0].split('/').reverse().join('')));
-            
-            if(tableBody.length > 0) {
-                doc.autoTable({
-                    startY: nextY,
-                    head: [['Data', 'Descrição', 'Unitário/Obs', 'Valor']],
-                    body: tableBody,
-                    theme: 'striped',
-                    headStyles: { fillColor: [27, 94, 32], textColor: 255, fontStyle: 'bold' },
-                    columnStyles: { 0: { cellWidth: 30 }, 3: { halign: 'right', fontStyle: 'bold' } }
-                });
-            }
-            doc.save(`Chuchuzeiro_${tipo}_${getSafeFileName()}_${filtroRaw}.pdf`);
-            showToast("PDF salvo!");
-        }
-
-        // -------------------- COMPARTILHAR WHATSAPP --------------------
-        async function compartilharWhatsapp() {
-            showToast("Preparando...");
             const filtro = document.getElementById('filtroMes').value;
-            const [ano, mes] = filtro.split('-');
-            const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
-            
+            const itens = [];
             const allV = await getAll("vendas");
             const allG = await getAll("gastos");
-            const v = allV.filter(i => i.dt.startsWith(filtro));
-            const g = allG.filter(i => i.dt.startsWith(filtro));
             
-            const totalV = v.reduce((s, i) => s + i.t, 0);
-            const totalG = g.reduce((s, i) => s + i.v, 0);
-            const saldo = totalV - totalG;
-            const totalCx = v.reduce((s, i) => s + i.q, 0);
-
-            const vSafra = allV.filter(i => i.dt.startsWith(ano));
-            const gSafra = allG.filter(i => i.dt.startsWith(ano));
-            const totalVSafra = vSafra.reduce((s, i) => s + i.t, 0);
-            const totalGSafra = gSafra.reduce((s, i) => s + i.v, 0);
-            const saldoSafra = totalVSafra - totalGSafra;
-
-            let msg = `*CHUCHUZEIRO - RELATÓRIO*\n`;
-            msg += `👤 ${getUserName()}\n🗓 ${nomeMes}/${ano}\n\n`;
-            msg += `*RESUMO DO MÊS:*\n`;
-            msg += `📦 Caixas: ${totalCx}\n`;
-            msg += `✅ Entradas: ${FORMAT_BRL.format(totalV)}\n`;
-            msg += `🔻 Saídas: ${FORMAT_BRL.format(totalG)}\n`;
-            msg += `💰 *Saldo Mês: ${FORMAT_BRL.format(saldo)}*\n\n`;
-            msg += `*RESUMO DA SAFRA (${ano}):*\n`;
-            msg += `📈 Receita: ${FORMAT_BRL.format(totalVSafra)}\n`;
-            msg += `📉 Custo: ${FORMAT_BRL.format(totalGSafra)}\n`;
-            msg += `🚜 *Resultado Safra: ${FORMAT_BRL.format(saldoSafra)}*\n\n`;
-            msg += `_Gerado pelo App Chuchuzeiro_`;
-
-            const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
-        }
-
-        // -------------------- EXPORTAR/IMPORTAR BACKUP --------------------
-        async function exportarManual() {
-            const [v, g] = await Promise.all([getAll("vendas"), getAll("gastos")]);
-            const dataHoje = new Date().toISOString().split('T')[0];
-            const blob = new Blob([JSON.stringify({vendas: v, gastos: g})], {type: "application/json"});
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = `Chuchuzeiro_Backup_${getSafeFileName()}_${dataHoje}.json`;
-            a.click();
+            // Se for ano, filtra pelo ano, senão pelo mês exato
+            const target = tipo === 'ano' ? filtro.split('-')[0] : filtro;
             
-            localStorage.setItem(BACKUP_KEY, new Date().toISOString());
-            document.getElementById('backup-alert').style.display = 'none';
-            showToast("Backup salvo!");
-        }
-
-        function iniciarImportacao(e) {
-            const file = e.target.files[0];
-            if(!file) return;
+            allV.filter(i=>i.dt.startsWith(target)).forEach(i => {
+                itens.push([i.dt, "Venda: "+i.q+" cx", `+ ${FORMAT_BRL.format(i.t)}`]);
+            });
+            allG.filter(i=>i.dt.startsWith(target)).forEach(i => {
+                itens.push([i.dt, i.d, `- ${FORMAT_BRL.format(i.v)}`]);
+            });
             
-            confirmAction("Restaurar Dados", "Isso irá mesclar os dados do arquivo com os dados atuais.", () => {
-                const reader = new FileReader();
-                reader.onload = f => {
-                    try {
-                        const data = JSON.parse(f.target.result);
-                        const txV = db.transaction("vendas", "readwrite");
-                        data.vendas.forEach(i => { delete i.id; txV.objectStore("vendas").put(i); });
-                        const txG = db.transaction("gastos", "readwrite");
-                        data.gastos.forEach(i => { delete i.id; txG.objectStore("gastos").put(i); });
-                        txG.oncomplete = () => { showToast("Dados restaurados!"); espelharDadosAutomatico(); render(); };
-                    } catch(err) { showToast("Arquivo inválido", "error"); }
-                };
-                reader.readAsText(file);
-            }, '📥');
+            doc.autoTable({ head: [['Data', 'Desc', 'Valor']], body: itens, startY: 30 });
+            doc.save('Relatorio.pdf');
         }
 
-        function limparBancoDados() {
-            const tx = db.transaction(["vendas", "gastos"], "readwrite");
-            tx.objectStore("vendas").clear();
-            tx.objectStore("gastos").clear();
-            tx.oncomplete = () => { 
-                localStorage.removeItem(AUTO_BACKUP_KEY); 
-                showToast("Tudo limpo!"); 
-                render(); 
-            };
-        }
-
-        // -------------------- NAVEGAÇÃO ENTRE ABAS --------------------
-        function navTo(viewId, tabEl) {
-            document.querySelectorAll('.view, .tab').forEach(el => el.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            tabEl.classList.add('active');
-            if(viewId === 'v-consulta') {
-                popularFiltroMeses().then(render);
-            }
-        }
-
-        // -------------------- INICIALIZAÇÃO --------------------
+        // --- INIT ---
         window.onload = () => {
             initDB();
-            setTodayDate();
-            checkUser();
-            setupKeyboardHelpers();
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js').catch(() => {});
-            }
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('dv').value = hoje;
+            document.getElementById('dg').value = hoje;
+            
+            if(!getUserName()) document.getElementById('welcome-modal').style.display = 'flex';
+            else updateUserUI();
+
+            // Detectar Online/Offline
+            window.addEventListener('online',  updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            updateOnlineStatus();
         };
+
+        function updateOnlineStatus() {
+            const tag = document.getElementById('status-tag');
+            if(navigator.onLine) {
+                tag.innerHTML = '<i class="fas fa-cloud"></i> ON';
+                tag.style.background = "rgba(255,255,255,0.2)";
+            } else {
+                tag.innerHTML = '<i class="fas fa-wifi-slash"></i> OFF';
+                tag.style.background = "#ef4444";
+            }
+        }
     </script>
 </body>
 </html>
