@@ -196,6 +196,32 @@
         .btn-backup-html { background: #0284c7; color: white; }
         .btn-backup-json { background: #64748b; color: white; }
         .btn-install { background: linear-gradient(135deg, #1b5e20, #004d40); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+        /* --- BOTÃO FLUTUANTE DE SALVAR (VIRTUAL) --- */
+        .fab-save {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: auto;
+            padding: 12px 24px;
+            background: var(--p);
+            color: white;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(27, 94, 32, 0.4);
+            z-index: 2000;
+            display: none; /* Só aparece ao digitar */
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .fab-save:active { transform: scale(0.95); }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
         
         /* --- Tiers Support --- */
         .tiers-grid {
@@ -428,6 +454,10 @@
         </div>
     </div>
 
+    <button id="fab-save" class="fab-save">
+        <i class="fas fa-check"></i> <span>Confirmar</span>
+    </button>
+
     <div class="container">
         
         <div id="v-venda" class="view active">
@@ -597,7 +627,6 @@
         channel.postMessage('check_alive');
         
         channel.onmessage = (event) => {
-            // Se outra aba responder que está viva, esta aqui se fecha ou alerta
             if (event.data === 'i_am_alive') {
                 document.body.innerHTML = `
                     <div style="display:flex; flex-direction:column; height:100vh; align-items:center; justify-content:center; text-align:center; padding:20px;">
@@ -605,7 +634,6 @@
                         <p>Para evitar erros no banco de dados, use apenas uma aba.</p>
                         <button onclick="window.close()" style="width:auto; background:#333; color:white; padding:10px 20px; border-radius:8px;">Fechar esta aba</button>
                     </div>`;
-                // Tenta fechar conexão DB se existir
                 if(db) db.close();
                 throw new Error("Multi-tab detected");
             } else if (event.data === 'check_alive') {
@@ -640,22 +668,68 @@
             }
         }
 
+        // --- GESTÃO DE TECLADO E BOTÃO VIRTUAL ---
+        function setupKeyboardHelpers() {
+            const fab = document.getElementById('fab-save');
+            const inputs = document.querySelectorAll('input');
+            
+            inputs.forEach(inp => {
+                inp.addEventListener('focus', () => {
+                    document.body.classList.add('keyboard-open');
+                    
+                    // Identifica qual aba está ativa para configurar o botão
+                    const activeView = document.querySelector('.view.active').id;
+                    if(activeView === 'v-venda') {
+                        fab.style.display = 'flex';
+                        fab.style.background = 'var(--income)';
+                        fab.innerHTML = '<i class="fas fa-check"></i> <span>Salvar Venda</span>';
+                        fab.onclick = (e) => { e.preventDefault(); salvarVenda(); inp.blur(); };
+                    } else if(activeView === 'v-gasto') {
+                        fab.style.display = 'flex';
+                        fab.style.background = 'var(--expense)';
+                        fab.innerHTML = '<i class="fas fa-money-bill-wave"></i> <span>Salvar Gasto</span>';
+                        fab.onclick = (e) => { e.preventDefault(); salvarGasto(); inp.blur(); };
+                    }
+                });
+
+                inp.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        const active = document.activeElement;
+                        // Só esconde se não focou em outro input
+                        if(active.tagName !== 'INPUT') {
+                            document.body.classList.remove('keyboard-open');
+                            fab.style.display = 'none';
+                        }
+                    }, 150); // Delay para permitir o clique
+                });
+            });
+        }
+
         // --- CORE DATABASE (IndexedDB) ---
         function initDB() {
-            const request = indexedDB.open(DB_NAME, DB_VERSION);
-            request.onupgradeneeded = e => {
-                db = e.target.result;
-                if(!db.objectStoreNames.contains("vendas")) db.createObjectStore("vendas", { keyPath: "id", autoIncrement: true });
-                if(!db.objectStoreNames.contains("gastos")) db.createObjectStore("gastos", { keyPath: "id", autoIncrement: true });
-            };
-            request.onsuccess = e => {
-                db = e.target.result;
-                // Verificar Auto-Restauração (Offline HTML)
-                checkOfflineRestore();
-                popularFiltroMeses();
-                render();
-            };
-            request.onerror = () => showToast("Erro ao abrir Banco de Dados", "error");
+            try {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = e => {
+                    db = e.target.result;
+                    if(!db.objectStoreNames.contains("vendas")) db.createObjectStore("vendas", { keyPath: "id", autoIncrement: true });
+                    if(!db.objectStoreNames.contains("gastos")) db.createObjectStore("gastos", { keyPath: "id", autoIncrement: true });
+                };
+                request.onsuccess = e => {
+                    db = e.target.result;
+                    // Verificar Auto-Restauração (Offline HTML)
+                    checkOfflineRestore();
+                    popularFiltroMeses();
+                    render();
+                };
+                request.onerror = () => {
+                    console.error("Erro DB");
+                    showToast("Erro ao abrir Banco de Dados", "error");
+                    // Se falhar o banco, ainda tenta mostrar a UI básica
+                    if(!getUserName()) document.getElementById('welcome-modal').style.display = 'flex';
+                };
+            } catch(e) {
+                console.error("DB Init Error", e);
+            }
         }
 
         function transaction(store, mode) { return db.transaction(store, mode).objectStore(store); }
@@ -704,7 +778,7 @@
         }
 
         function checkOfflineRestore() {
-            // VERIFICAR HARD RESET: Se o usuário resetou o app recentemente, ignora os dados embutidos
+            // VERIFICAR HARD RESET: Flag de segurança
             if (localStorage.getItem('ignore_embed') === 'true') {
                 console.log("Ignorando dados embutidos devido ao Hard Reset.");
                 return;
@@ -720,23 +794,17 @@
                     if(data.user) localStorage.setItem('user_name', data.user);
                     updateUserUI();
 
-                    // Restaurar DB se estiver vazio ou mesclar (estratégia simples: limpar e por o backup)
-                    // Para evitar duplicatas na versão offline, vamos limpar e reinserir
+                    // Restaurar DB
                     const tx = db.transaction(["vendas", "gastos"], "readwrite");
-                    
-                    // Limpar atual (já que abriu o arquivo de backup, assume-se que quer ver o backup)
                     tx.objectStore("vendas").clear();
                     tx.objectStore("gastos").clear();
-                    
                     data.vendas.forEach(i => tx.objectStore("vendas").put(i));
                     data.gastos.forEach(i => tx.objectStore("gastos").put(i));
                     
                     showToast("Dados restaurados do arquivo!", "success");
-                    
-                    // Limpar a tag para não re-importar se der refresh (opcional, mas seguro manter)
-                    // scriptTag.textContent = ""; 
                 } catch (e) {
-                    console.error("Falha na auto-restauração", e);
+                    console.error("Falha na auto-restauração. Script vazio ou corrompido.", e);
+                    // Não trava a tela se der erro aqui
                 }
             }
         }
@@ -746,7 +814,6 @@
             try {
                 const vendas = await getAll("vendas");
                 const gastos = await getAll("gastos");
-                // Simples verificação
                 if(!Array.isArray(vendas) || !Array.isArray(gastos)) throw new Error("Estrutura inválida");
                 
                 const blob = new Blob([JSON.stringify({vendas, gastos})], {type: "application/json"});
@@ -978,7 +1045,7 @@
 
         // --- SISTEMA ---
         function limparBancoDados() {
-            db.close();
+            if(db) db.close();
             const req = indexedDB.deleteDatabase(DB_NAME);
             req.onsuccess = () => {
                 localStorage.clear();
@@ -1063,6 +1130,9 @@
             document.getElementById('dv').value = hoje;
             document.getElementById('dg').value = hoje;
             
+            // Setup do botão virtual e teclado
+            setupKeyboardHelpers();
+
             if(!getUserName()) document.getElementById('welcome-modal').style.display = 'flex';
             else updateUserUI();
 
